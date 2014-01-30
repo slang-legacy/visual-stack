@@ -63,8 +63,6 @@ define('/trace/trace_server',function(require){
 		}
 		process.stderr.write('\n');
 	}
-
-
 	function makeFilter(fspec){
 
 		if(typeof fspec == 'string') fspec = JSON.parse(fspec)
@@ -199,7 +197,7 @@ define('/trace/trace_server',function(require){
 						return out('~r~ERROR: ~~ .tracegl file already exists, remove before creating a new template')
 					}
 					fs.writeFileSync("tracegl.json", define.settingsData)
-					return out('~g~OK: ~~ tracegl.jsonl file written in current directory, open it in an editor to modify settings')
+					return out('~g~OK: ~~ tracegl.json file written in current directory, open it in an editor to modify settings')
 				}else if(a.indexOf('-bind')== 0){
 					bind = a.slice(6)
 				} else return usage("Invalid argument "+a)
@@ -430,8 +428,6 @@ define('/trace/trace_server',function(require){
 			console.log('exit!')
 			//gz.end()
 		})
-
-
 		return function(m){
 			if(!terminated){
 				// we should buffer atleast a megabyte
@@ -662,8 +658,6 @@ function define(id,fac){
 	//PACKEND
 }
 
-// | Function, utility lib|_____________________/
-
 define('/core/fn',function(){
 
 	if(console.log.bind)
@@ -712,8 +706,6 @@ define('/core/fn',function(){
 		for(var i = 0, j = a.length;i<j;i++) g[n[i]] = a[i]
 		return g
 	}
-
-
 	// |  left right linked list 
 	function list(l, r){ 
 //		var u // unique id/
@@ -805,8 +797,6 @@ define('/core/fn',function(){
 			if(ln == 1 && li.fill) li.fill()
 			return ln
 		}
-
-
 		//|  remove item from the list
 		function rm(i){
 			if(arguments.length > 1){
@@ -1342,8 +1332,6 @@ define('/core/fn',function(){
 							}
 						}
 						// we check the substring length and fold if < n
-
-
 						s[c++]=", "  +nl
 					}
 					s[c-1] = nl + ip + "]"
@@ -3125,10 +3113,6 @@ define('/core/acorn',function(require, exports, module){
 
 });
 
-// | Acorn.js tools |____________________________/
-// |
-// |  (C) Code.GL 2013
-
 define('/core/acorn_tools',function(require, exports, module){
   "no tracegl"
 
@@ -3439,10 +3423,7 @@ define('/core/acorn_tools',function(require, exports, module){
 	}
 })
 
-// | Browser <> Node.JS communication channels |__/
-// |
-// |  (C) Code.GL 2013
-
+// Browser <> Node.JS communication channels
 define('/core/io_channel',function(require, exports, module){
 
 	if(typeof process !== "undefined"){
@@ -4337,10 +4318,7 @@ define('/trace/instrument',function(require){
 	return instrument
 })
 
-// | Basic Node.JS server with io channel |_________/
-// |
-// |  (C) Code.GL 2013
-
+// Basic Node.JS server with io channel
 define('/core/io_server',function(require){
 
 	var http = require("http")
@@ -4609,8 +4587,8 @@ define('/core/io_server',function(require){
 	}
 	return ioServer
 })
-// | GL Browser context |_______________________/
 
+// GL Browser context
 define('/core/gl_browser',function(require, exports, module){
 
 	var fn = require("./fn")
@@ -4730,7 +4708,6 @@ define('/core/gl_browser',function(require, exports, module){
 		gl.mouse_s = fn.ps()
 		gl.keydown = fn.ps()
 		gl.keyup = fn.ps()
-
 
 		// default
 		// none
@@ -5026,8 +5003,6 @@ define('/core/gl_browser',function(require, exports, module){
 			}
 		}, 100)
 	}
-
-
 	// |  font and image loader
 	gl.load = function(){
 		var n = 0
@@ -5342,8 +5317,8 @@ define('/core/gl_browser',function(require, exports, module){
 
 	return gl
 })
-// | GL Shader compilers |______________________/ 
 
+// GL Shader compilers
 define('/core/gl',function(require, exports, module){
 	var fn = require("./fn")
 	var gl = require("./gl_browser") 
@@ -6126,8 +6101,6 @@ define('/core/gl',function(require, exports, module){
 	}
 	
 	// |  evaluate a float shader expression in js
-
-
 	// JS version of the expression compiler
 	function js_expr(f, a, un, el, rd){ // function, args
 		if(!f) return a[0]
@@ -6229,8 +6202,6 @@ define('/core/gl',function(require, exports, module){
 		// actual evaluation
 		return j(n, n._p || n._b, un, el, gt.builtin, gl.eval)
 	}
-
-
 	//|  render to texture
 	gl.renderTexture = function(w, h, f){
 		var b = gl.createFramebuffer()
@@ -6258,8 +6229,6 @@ define('/core/gl',function(require, exports, module){
 		t.id = gl.textureID++
 		return t
 	}
-
-
 	//|  detect POINT ORIGIN
 	function detect_y(){
 		// build shaders
@@ -6673,8 +6642,7 @@ define('/core/gl',function(require, exports, module){
 	gl.undebug = undebug
 })
 
-// | GLSL Extension lib |_______________________/
-
+// GLSL Extension lib
 define('/core/ext_lib',function(require, exports){
 	"no tracegl"
 	var fn = require("./fn")
@@ -6869,7 +6837,6 @@ define('/core/ext_lib',function(require, exports){
 	// Stefan Gustavson, Ian McEwan Ashima Arts
 	// Google keywords: GLSL simplex noise
 	// MIT License. 
-	
 	e.permute1 = function(float_x) {
 		return_float( mod((34.0 * x + 1.0) * x, 289.0) );
 	}
@@ -7214,8 +7181,7 @@ define('/core/ext_lib',function(require, exports){
 	return e
 })
 
-// | UI Drawing |____________________________/
-
+// UI Drawing
 define('/core/ui_draw',function(require, exports, module){
 
 	var fn = require("./fn")
@@ -7277,8 +7243,6 @@ define('/core/ui_draw',function(require, exports, module){
 			rect.set(n._v.c, n._s, 0, 0)
 			n._v.up = 1
 		}
-
-
 		rect.drawer = function(n){
 			n.l = 1
 			var sd = ui.gl.getShader(rect.sd, n)
@@ -7518,7 +7482,8 @@ define('/core/ui_draw',function(require, exports, module){
 
 	}
 })
-// | User Interface |___________________________/ 
+
+// User Interface
 define('/core/ui',function(require){
 
 	var gl = require("./gl")
@@ -8764,8 +8729,7 @@ define('/core/ui',function(require){
 	return ui
 })
 
-// | Control behaviors |_________________________/ 
-
+// Control behaviors
 define('/core/controls_mix',function(require, exports){
 
 	var ui = require("./ui")
@@ -9495,10 +9459,8 @@ define('/core/controls_mix',function(require, exports){
 		}
 	}
 })
-// | Controls |_________________________________/
 
 define('/core/controls',function(require, exports){
-
 	var ui = require("./ui")
 	var fn = require("./fn")
 	var cm = require("./controls_mix")
@@ -9595,9 +9557,6 @@ define('/core/controls',function(require, exports){
 		}
 		k.n_ = function(){ k.a0 = -0.3 }
 		k.c_ = function(){ k.a0 = 0.05, k.e0 = 0}
-
-
-
 		// when scrolling we should show and fade out
 		b.move = function(){
 			if(inout) return
@@ -9845,8 +9804,6 @@ define('/core/controls',function(require, exports){
 		b.y_ = 'n._y + n.vScroll' // scroll padded
 
 	}
-
-
 	// |  vertical slider
 	ct.vSlider = function(g){
 		// parts
@@ -10295,8 +10252,6 @@ define('/core/controls',function(require, exports){
 				+	')' 
 		})
 	}
-
-
 	// |  horizontal slides with kb nav
 	ct.slides = function(g){
 		var b = ui.group()
@@ -10356,8 +10311,6 @@ define('/core/controls',function(require, exports){
 		return b
 	}
 })
-
-// | Themes |___________________________________/ 
 
 define('/core/themes',function(require, exports){
 	function hex(c){ return 'vec4('+(((c>>16)&0xff)/255)+','+(((c>>8)&0xff)/255)+','+((c&0xff)/255)+',1)'	}
@@ -10464,10 +10417,8 @@ define('/core/themes',function(require, exports){
 		codeExMany: hexs('D6FFFE')
 	}
 })
-// | Text Mixins |_________________________/ 
 
 define('/core/text_mix',function(require, exports){
-
 	var ui = require("./ui")
 	var fn = require("./fn")
 
@@ -11087,8 +11038,6 @@ define('/core/text_mix',function(require, exports){
 				b.markerHover(mh)
 				if(!mh) ui.gl.cursor(opt.cursor || 'text')
 			} else ui.gl.cursor(opt.cursor || 'text')
-
-
 			return 1
 		}
 
@@ -11222,8 +11171,6 @@ define('/core/text_mix',function(require, exports){
 				if(c.vb) s.draw(c.vb)
 				c = c._d
 			}
-
-
 		}
 
 		b.drawCursors = function(){
@@ -11284,8 +11231,6 @@ define('/core/text_mix',function(require, exports){
 			if(b._h_.l == 1)
 				b.sh.lrShadow.rect(b.vps.o.x + b.vps.o.w, b.vps.o.y, - 5, b.vps.o.h)
 		}
-
-
 		b.cursorUpdate = function(c){
 			// fetch cursor coords, oriented
 			var u = c.u, v = c.v, x = c.x, y = c.y
@@ -11559,10 +11504,8 @@ define('/core/text_mix',function(require, exports){
 	}
 
 })
-// | UI trace database |________________________/ 
 
 define('/trace/trace_db',function(require, exports, module){
-	
 	var fn = require("../core/fn")
 	var ui = require("../core/ui")
 	var tm = require("../core/text_mix")
@@ -11810,8 +11753,7 @@ define('/trace/trace_db',function(require, exports, module){
 	return traceDb
 })
 
-// | Shader library |____________________________/ 
-
+// Shader library
 define('/core/text_shaders',function(require, exports){
 	"no tracegl"
 	var gl = require("./gl")
@@ -11872,10 +11814,7 @@ define('/core/text_shaders',function(require, exports){
 	})
 })
 
-// | Code view |______________________________/ 
-
 define('/trace/code_db',function(require){
-
 	var fn = require("../core/fn")
 	var ui = require("../core/ui")
 
@@ -11886,8 +11825,7 @@ define('/trace/code_db',function(require){
 	var ts = require("../core/text_shaders")
 	var gl = ui.gl
 	
-	//|  Styling   
-
+	//  Styling
 	var ft1 = ui.gl.sfont(
 		navigator.platform.match(/Mac/)?
 		"12px Menlo":
@@ -11995,17 +11933,12 @@ define('/trace/code_db',function(require){
 			//b.size()
 			return f
 		}
-
 		return db
 	}
-
 	return codeDb
 })
 
-// | List view |________________________________/ 
-
 define('/trace/list_view',function(require, exports, module){
-
 	var fn = require("../core/fn")
 	var ui = require("../core/ui")
 	var ct = require("../core/controls")
@@ -12013,8 +11946,7 @@ define('/trace/list_view',function(require, exports, module){
 	var ts = require("../core/text_shaders")
 	var gl = ui.gl
 
-	//|  Styling   
-
+	//Styling   
 	var font1 = ui.gl.sfont(
 		navigator.platform.match(/Mac/)?
 		"12px Menlo":
@@ -12152,23 +12084,16 @@ define('/trace/list_view',function(require, exports, module){
 			b.l = layer
 			ui.redraw(b)
 		}
-
 		b.hide = function(){
 			if(b.l !== -1){
 				b.l = -1
 				ui.redraw(b)
 			}
 		}
-
 		return b
 	}
-
 	return listView
 })
-
-
-
-// | Code view |______________________________/ 
 
 define('/trace/code_view',function(require){
 
@@ -12182,8 +12107,7 @@ define('/trace/code_view',function(require){
 	var ts = require("../core/text_shaders")
 	var gl = ui.gl
 	
-	//|  Styling   
-
+	// Styling
 	var ft1 = ui.gl.sfont(
 		navigator.platform.match(/Mac/)?
 		"12px Menlo":
@@ -12248,8 +12172,6 @@ define('/trace/code_view',function(require){
 	return codeView
 })
 
-// | Code view |______________________________/ 
-
 define('/trace/hover_text',function(require){
 
 	var fn = require("../core/fn")
@@ -12262,8 +12184,7 @@ define('/trace/hover_text',function(require){
 	var ts = require("../core/text_shaders")
 	var gl = ui.gl
 	
-	//|  Styling   
-
+	// Styling
 	var ft1 = ui.gl.sfont(
 		navigator.platform.match(/Mac/)?
 		"12px Menlo":
@@ -12359,8 +12280,7 @@ define('/trace/hover_text',function(require){
 	return hoverText
 })
 
-// | Code view |______________________________/ 
-
+// Code view
 define('/trace/code_bubble',function(require){
 
 	var fn = require("../core/fn")
@@ -12373,8 +12293,7 @@ define('/trace/code_bubble',function(require){
 	var ts = require("../core/text_shaders")
 	var gl = ui.gl
 	
-	//|  Styling   
-
+	// Styling
 	var ft1 = ui.gl.sfont(
 		navigator.platform.match(/Mac/)?
 		"12px Menlo":
@@ -12498,8 +12417,6 @@ define('/trace/code_bubble',function(require){
 		bg.resetLine = function(){
 			body.view(0, body.line, 0, 1, 2)
 		}
-
-
 		function setTitle(m){
 			var v = bg._p._p._p._p.hoverView
 			var tdb = body.tdb
@@ -12532,10 +12449,8 @@ define('/trace/code_bubble',function(require){
 				}
 			}
 		}
-		
 
 		bg.setTitle = function(m, tdb){
-		
 			var h = 0
  			body.y = h + 10
 			title.h = h + 10
@@ -12759,7 +12674,6 @@ define('/trace/code_bubble',function(require){
 				}
 			}
 			addClosures(m, 0)
-
 		}
 
 		body.o = function(){
@@ -12796,7 +12710,6 @@ define('/trace/code_bubble',function(require){
 		}
 
 		body.markerHover = function(m){
-				
 			// make sure we only process on change
 			if(ui.mx == lx && ui.my == ly && m == lc)return
 			lx = ui.mx, ly = ui.my, lc = m
@@ -12835,10 +12748,8 @@ define('/trace/code_bubble',function(require){
 			// we get this fired when someone hovers over a marker.
 			ui.gl.cursor('pointer')
 		}
-
 		return bg
 	}
-
 	return codeBubble
 })
 
@@ -12894,7 +12805,6 @@ define('/trace/trace_client',function(require){
 		}
 	}
 	ui.load(function(){
-
 		var tdb = traceDb()
 		var sdb = traceDb(tdb)
 		var cdb = codeDb()
@@ -13261,7 +13171,6 @@ define('/trace/trace_client',function(require){
 						ct.hvScroll(n)
 					})
 				})
-
 			})
 			// the hover info view
 			n.hoverView = hoverView = hoverText()
@@ -13272,13 +13181,10 @@ define('/trace/trace_client',function(require){
 			n.selectCall = selectCall
 			hoverView.show(false)
 		})
-
 		chan.send({t:'join'})
-
 		ui.drawer()
 	})
 })
-define.settingsData = "{\n\t\"theme\" : \"dark\", // other theme: light\n\t\"ui\":2000, // UI port\n\t\"tgt\":2080, // browser JS port\n\t\"do\":[], // only trace files matching\n\t\"no\":[], // ignore files matching \":match\" for string or \"/match\" for regexp\n\t\"editors\" : { // editor paths per platform, modify these to set up your editor\n\t\t\"darwin\":{\n\t\t\t\"sublime3\":{\n\t\t\t\t\"bin\":\"/Applications/Sublime Text 3.app/Contents/SharedSupport/bin/subl\",\n\t\t\t\t\"args\":[\"$file:$line\"]\n\t\t\t},\n\t\t\t\"sublime2\":{\n\t\t\t\t\"bin\":\"/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl\",\n\t\t\t\t\"args\":[\"$file:$line\"]\n\t\t\t},\n\t\t\t\"textmate\":{\n\t\t\t\t\"bin\":\"/Applications/TextMate.app/Contents/Resources/mate\",\n\t\t\t\t\"args\":[\"$file\",\"--line\",\"$line\"]\n\t\t\t}\n\t\t},\n\t\t\"win32\":{},\n\t\t\"sunos\":{},\n\t\t\"linux\":{},\n\t\t\"freebsd\":{}\n\t}\n}";
 define.settings = {
 	"theme" : "dark", // other theme: light
 	"ui":2000, // UI port
@@ -13306,4 +13212,5 @@ define.settings = {
 		"freebsd":{}
 	}
 }
+define.settingsData = JSON.stringify(define.settings);
 define.factory["/trace/trace_server"](define.mkreq("/trace/trace_server"))
