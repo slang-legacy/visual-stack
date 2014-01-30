@@ -2,9 +2,9 @@
 
 define('/trace/trace_server',function(require){
   if(process.version.indexOf('v0.6') != -1 || process.version.indexOf('v0.4') != -1){
-    console.log("Node version too old, try 0.8 or 0.10")
-    process.exit(-1)
-    return
+    console.log("Node version too old, try 0.8 or 0.10");
+    process.exit(-1);
+    return;
   }
 
   var path = require('path');
@@ -18,36 +18,35 @@ define('/trace/trace_server',function(require){
   var childproc = require('child_process');
 
   // the nodejs loader
-  if(process.argv[2] && process.argv[2].indexOf('-l')==0) return nodeLoader()
+  if(process.argv[2] && process.argv[2].indexOf('-l')==0) return nodeLoader();
 
   function nodeLoader(){
-    var filter = makeFilter(process.argv[2].slice(2))
-
+    var filter = makeFilter(process.argv[2].slice(2));
     var m = require('module').Module.prototype;
     var oldCompile = m._compile;
-    var did = 1
+    var did = 1;
     m._compile = function(content, filename){
 
       if(filter.active && filter(filename))
-        return oldCompile.call(this, content, filename)
+        return oldCompile.call(this, content, filename);
       // lets instrument
-      var t = instrument(filename, content, did, filter.opt)
-      did = t.id
+      var t = instrument(filename, content, did, filter.opt);
+      did = t.id;
       // send the dictionary out
-      var m = {dict:1, src:t.input, f:filename, d:t.d}
-      if(process.send)  process.send(m)
-      else process.stderr.write('\x1f'+JSON.stringify(m)+'\x17')
-      return oldCompile.call(this, t.output, filename)
-    }
-    process.argv.splice(1,2) // remove leading arguments
+      var m = {dict:1, src:t.input, f:filename, d:t.d};
+      if(process.send)  process.send(m);
+      else process.stderr.write('\x1f'+JSON.stringify(m)+'\x17');
+      return oldCompile.call(this, t.output, filename);
+    };
+    process.argv.splice(1,2); // remove leading arguments
     // clear require cache
-    for(var k in define.require.cache) delete define.require.cache[k]
-    var file = path.resolve(process.argv[1])
+    for(var k in define.require.cache) delete define.require.cache[k];
+    var file = path.resolve(process.argv[1]);
     define.require(file);
   }
 
-  var fn = require('../core/fn')
-  var ioServer = require('../core/io_server')
+  var fn = require('../core/fn');
+  var ioServer = require('../core/io_server');
 
   function out() {
     var colors = {
