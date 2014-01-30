@@ -17,7 +17,6 @@ define('/trace/trace_server',function(require){
 	var crypto = require('crypto')
 	var instrument = require('./instrument')
 	var childproc = require('child_process')
-	var ssl_pub = require('../core/sign_pub')
 
 	// the nodejs loader
 	if(process.argv[2] && process.argv[2].indexOf('-l')==0) return nodeLoader()
@@ -49,7 +48,6 @@ define('/trace/trace_server',function(require){
 	}
 
 	var fn = require('../core/fn')
-	var ssl = require('../core/io_ssl')
 	var ioServer = require('../core/io_server')
 
 	function out() {
@@ -129,65 +127,6 @@ define('/trace/trace_server',function(require){
 		!define.settings)
 		loadSettings(path.resolve(path.dirname(__filename),"tracegl.json"))
 
-	function update(){
-		// call the server for an update
-
-		if(typeof sig64 == 'undefined') return
-		out('~~[trace.GL] ~w~Checking for update...')
-		var s = sig64.split('=')
-		var sig = s[0]
-		var req = https.request("https://trace.gl/update/" + s[1] + "/" + encodeURIComponent(sig+'='), function(res){
-			var code = ''
-			res.on('error', function(){
-				out("~br~Error fetching update!")
-			})
-			res.on('data', function(d){
-				code += d.toString()
-			})
-			res.on('end', function(){
-				var end = '(define.mkreq("/trace/trace_server"))'
-				if(code.lastIndexOf(end) == code.length - end.length){
-					// check signature
-					var newsig
-					var data = code.replace(/var sig64=\"(.*?=).*?\"\n/g,function(m,a){newsig = a;return "var sig64=\"\"\n"})
-					var verify = crypto.createVerify('sha1')
-					verify.update(data)
-					if(!verify.verify(ssl_pub, newsig, 'base64')){
-						return out("~br~Warning signature invalid, please contact info@trace.gl.")
-					} else {
-						// write to new file next to our main file
-						var mainfile = process.mainModule.filename
-						var jsfile = path.basename(mainfile)
-						var dirname = path.dirname(mainfile)
-						var newfile = dirname + '/tracegl.js.' + encodeURIComponent(newsig).slice(0, 10)
-						var oldfile = dirname + '/tracegl.js.old.' + encodeURIComponent(sig).slice(0, 10)
-						fs.writeFile(newfile, code, function(err){
-							if(err) return out("~br~Error writing update " + err)
-							if(jsfile == 'trace_server.js') return out("~br~Not an updateable process ")
-							// rename swap old and new file
-							try{
-								fs.renameSync(mainfile, oldfile)
-								fs.renameSync(newfile, mainfile)
-								out("~bg~traceGL updated, please restart application.\n")
-							} catch(e){
-								return out("~br~Update rename failed, might need manual recovery")
-							}
-							// only swap if we are named tracegl.js
-						})
-					}
-				} else {
-					if(code.indexOf("There was a problem with your invoice")!= -1){
-						out('Your license is invalid, please buy copy at http://trace.gl or contact info@trace.gl.\n')
-					} else {
-						out('up to date.\n')
-					}
-				}
-			})
-		})
-		req.on('error', function(e){ })
-		req.end()
-	}
-
 	// argument parse variables
 	function processArgs(arg){
 		var sender // send messages to ui or zip
@@ -259,17 +198,12 @@ define('/trace/trace_server',function(require){
 					}
 					fs.writeFileSync("tracegl.json", define.settingsData)
 					return out('~g~OK: ~~ tracegl.jsonl file written in current directory, open it in an editor to modify settings\n')
-				} else if(a.indexOf('-update') == 0){
-					return update()
 				}else if(a.indexOf('-bind')== 0){
 					bind = a.slice(6)
 				} else return usage("Invalid argument "+a)
 			} else {
 				if(!sender) sender = uiSender(uiport, bind)
 				var f = makeFilter(fspec)
-				// always run update in the background
-				if(!noup) update()
-
 				var isfile;
 				try{ isfile = fs.statSync(a).isFile() } catch(e){}
 
@@ -4400,54 +4334,7 @@ define('/trace/instrument',function(require){
 
 	return instrument
 })
-define('/core/sign_pub',function(require, exports, module){
-	module.exports = "-----BEGIN CERTIFICATE-----\n"+
-"MIICATCCAWoCCQCx3fprEs5pGjANBgkqhkiG9w0BAQUFADBFMQswCQYDVQQGEwJO\n"+
-"TDETMBEGA1UECBMKU29tZS1TdGF0ZTEhMB8GA1UEChMYSW50ZXJuZXQgV2lkZ2l0\n"+
-"cyBQdHkgTHRkMB4XDTEzMDQyMjE2NTQ1NloXDTEzMDUyMjE2NTQ1NlowRTELMAkG\n"+
-"A1UEBhMCTkwxEzARBgNVBAgTClNvbWUtU3RhdGUxITAfBgNVBAoTGEludGVybmV0\n"+
-"IFdpZGdpdHMgUHR5IEx0ZDCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAs4WV\n"+
-"/h2J6NDNFmLILh8qmvmN1qdZ3HLI0ziK8b30KOM5JJlmPJCIMZe0KPNJ8iEikXsk\n"+
-"Ps4Se92xwNS8f2pFSUCqEFLoflUtU4WyHvG/D8inmja/pVQDo8QCUsBNgNFansgJ\n"+
-"JvUwSP7NAOEGPk4f1F81wYFgZv3CfBrTbPWsT5kCAwEAATANBgkqhkiG9w0BAQUF\n"+
-"AAOBgQBx8JRViaOwoY1IjN2Jq7MIKSmkVVfLfeY7975eDJCyP4C1OH58jTYFBGSt\n"+
-"scB6zNtISm46AoAzg5sGLlLtqF4LvUGJQgq5Rs6L6gc3ufC2a7pu3j6MpbmncT0o\n"+
-"wXI5YEtHkODTdprtDgS4juFnCP/IioWK3HbJ5/Hpm+/fsi1laA==\n"+
-"-----END CERTIFICATE-----"
-})
-define('/core/io_ssl',function(require, exports, module){
 
-	module.exports = {
-		cert: "-----BEGIN CERTIFICATE-----\n"+
-	"MIIB7zCCAVgCCQD4paokB3c5RzANBgkqhkiG9w0BAQUFADA8MQswCQYDVQQGEwJO\n"+
-	"TDELMAkGA1UECBMCTkgxDDAKBgNVBAcTA0FNUzESMBAGA1UEChMJTG9jYWxob3N0\n"+
-	"MB4XDTEyMTAyNzExMjEyNVoXDTEyMTEyNjExMjEyNVowPDELMAkGA1UEBhMCTkwx\n"+
-	"CzAJBgNVBAgTAk5IMQwwCgYDVQQHEwNBTVMxEjAQBgNVBAoTCUxvY2FsaG9zdDCB\n"+
-	"nzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEA0CEQ2x8I4ri+ePcetGP6+jWmpe1A\n"+
-	"0U+q4jZYb/ws1D8sfnexc9UCz1j5y1WVyLxExfNTw7gi19+1ASGWE/JGSbIl6aRd\n"+
-	"8Ez0IuYLEtCds/BXRAj2Mq9Iu45T8fgswgX2ErtuGEOHfSOA+l9PvtBPg2AKJNzP\n"+
-	"4WJY0hw6HDS+lccCAwEAATANBgkqhkiG9w0BAQUFAAOBgQCQMx+M4iM/6ZQNwGzi\n"+
-	"9U9Gm2hvemSmgcP05zBeisN3yFGNxNtVZyZ3K/sITE2KOW11Wcd/VDWfO6OGxlPx\n"+
-	"yObL+GPVkL/2HEfBfYovqcSdHT+ZiVVo4tYJt6Tdx8iGAuOtAP7C+vl81CDI4fHf\n"+
-	"9npl96D1wcQjW3PtI7YacYXjmQ==\n"+
-	"-----END CERTIFICATE-----",
-		key:"-----BEGIN RSA PRIVATE KEY-----\n"+
-	"MIICXQIBAAKBgQDQIRDbHwjiuL549x60Y/r6Naal7UDRT6riNlhv/CzUPyx+d7Fz\n"+
-	"1QLPWPnLVZXIvETF81PDuCLX37UBIZYT8kZJsiXppF3wTPQi5gsS0J2z8FdECPYy\n"+
-	"r0i7jlPx+CzCBfYSu24YQ4d9I4D6X0++0E+DYAok3M/hYljSHDocNL6VxwIDAQAB\n"+
-	"AoGAPo2BlGnqcMHXtWGIX+0gtGzFjl8VORN5p41v3RBspMnr5IKy2b5unsT+Joet\n"+
-	"gexbuybbyRohlsIMk691fL83MknJA7CPTE0RZKEKN2gS41cagpM8+3rm57ElZBub\n"+
-	"SjZUq8WYbL0gY4GL6b+jgdm9F4qlm5DxVBqk4oadHEhZHqECQQD79XiV9SWB6m/+\n"+
-	"tg6leOeBnlbfHURwyyyhDEbhXEWfr9OUXg+vng+rDtf5p1T6u3oQ0u1lYG+RlFwu\n"+
-	"MDMSWZM3AkEA03eh6sxJBvvLzNIHFsy9Oer7Tq+1R7nr0/ylmr2kjUeVg3fSiuCY\n"+
-	"MTD9c+YubBidN7PNXZyiW/o2sYRRHdp58QJAL77Feg05bVQCow7W2a5+mEZsCd2e\n"+
-	"8YzeySntaJk2rFsCShRE/q+CIpUugiWeaeEK8ZM230YV/k1R5oLFus10owJBAKsS\n"+
-	"iwDCBwoJRVQLTQTa2PIz8N41Mzg1Zlz2dJp8dNR+ZqwWkVMcYsLY2RGb005Lk1Ru\n"+
-	"tuLWRlqWTwzI+D5ocmECQQC99YYhg+Jo9ONQz7ov5KSh1NCBDZCBd91GEV+NJzgd\n"+
-	"WArz102//xuzKcakjdHPUbuUYUeIAC/8grKvN2hnsB4h\n"+
-	"-----END RSA PRIVATE KEY-----"
-	}
-})
 // | Basic Node.JS server with io channel |_________/
 // |
 // |  (C) Code.GL 2013
