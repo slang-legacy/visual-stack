@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "description": "Visualize JavaScript codeflow",
   "main": "lib",
+  "bin": {
+    "visual-stack": "lib/index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -14,6 +17,9 @@
   "license": "GPLv3",
   "bugs": {
     "url": "https://github.com/slang800/visual-stack/issues"
+  },
+  "engines": {
+    "node": ">=0.8.0"
   },
   "homepage": "https://github.com/slang800/visual-stack"
 }
