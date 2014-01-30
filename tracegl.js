@@ -19,8 +19,8 @@ define('/trace/trace_server',function(require){
 
   // the nodejs loader
   if(process.argv[2] && process.argv[2].indexOf('-l')==0) return nodeLoader()
-  
-  function nodeLoader(){ 
+
+  function nodeLoader(){
     var filter = makeFilter(process.argv[2].slice(2))
 
     var m = require('module').Module.prototype;
@@ -28,9 +28,9 @@ define('/trace/trace_server',function(require){
     var did = 1
     m._compile = function(content, filename){
 
-      if(filter.active && filter(filename)) 
+      if(filter.active && filter(filename))
         return oldCompile.call(this, content, filename)
-      // lets instrument 
+      // lets instrument
       var t = instrument(filename, content, did, filter.opt)
       did = t.id
       // send the dictionary out
@@ -72,7 +72,7 @@ define('/trace/trace_server',function(require){
     function init(a){
       var d = []
       for(var i = 0;i<a.length;i++){
-        if(a[i].charAt(0)==':') d[i] = a[i].slice(1) 
+        if(a[i].charAt(0)==':') d[i] = a[i].slice(1)
         else d[i] = new RegExp(a[i].slice(1),"i")
       }
       return d
@@ -96,7 +96,7 @@ define('/trace/trace_server',function(require){
 
     f.opt = fspec._opt
     f.active = _do.length || _no.length
-  
+
     f.stringify = function(){
       return JSON.stringify(fspec)
     }
@@ -114,13 +114,13 @@ define('/trace/trace_server',function(require){
       define.settingsData = data
       define.settingsFile = file
     }
-    catch(e){  
+    catch(e){
       console.log("Error reading settings file ("+file+") ",e)
     }
   }
 
-  if(!loadSettings(path.resolve(process.cwd(),"tracegl.json")) && 
-    !loadSettings("~/tracegl.json") && 
+  if(!loadSettings(path.resolve(process.cwd(),"tracegl.json")) &&
+    !loadSettings("~/tracegl.json") &&
     !loadSettings(path.resolve(path.dirname(__filename),"tracegl.json")) &&
     !define.settings)
     loadSettings(path.resolve(path.dirname(__filename),"tracegl.json"))
@@ -269,7 +269,7 @@ define('/trace/trace_server',function(require){
               console.log("Building file find search db from "+root+" ..")
               scanHash = {}
               scan(root, find)
-            } 
+            }
             else find()
           } else {
             var sf = path.resolve(root, sp.join('/'))
@@ -287,7 +287,7 @@ define('/trace/trace_server',function(require){
   function openEditor(file, line){
     var ed
     var s = define.settings
-    if(!s.editors || 
+    if(!s.editors ||
       !(ed = s.editors[process.platform]))
       return console.log("No editor settings available for your platform")
     // lets try all editors
@@ -328,7 +328,7 @@ define('/trace/trace_server',function(require){
 
     var dict = []
     var queue = []
-    var joined = false 
+    var joined = false
 
     var finder = fileFinder(process.cwd())
 
@@ -390,13 +390,13 @@ define('/trace/trace_server',function(require){
     fstr.on('error', function(err){
       console.log("Error writing "+file+" "+err)
     })
-    
+
     gz.on('error', function(err){
       console.log("Error zipping "+file+" "+err)
     })
 
     gz.pipe(fstr)
-    
+
     var buf = []
     var total = 0
 
@@ -452,10 +452,10 @@ define('/trace/trace_server',function(require){
     tgt.data = function(m, c){
       sender(m)
     }
-    
-    var fileCache= {}    
+
+    var fileCache= {}
     var did = 1 // count instrument offset id
-    
+
     tgt.fileChange = function(f){
       // lets flush everything
       fileCache = {}
@@ -504,7 +504,7 @@ define('/trace/trace_server',function(require){
     args.unshift(file)
     args.unshift('-l' + filter.stringify())
     args.unshift(process.argv[1])
-     
+
      var stdio = [process.stdin, process.stdout,'pipe']
      //if(process.version.indexOf('v0.8') != -1)  stdio.push('ipc')
 
@@ -538,8 +538,8 @@ define('/trace/trace_server',function(require){
     tgt.data = function(m, c){
       sender(m)
     }
-    
-    var fileCache= {}    
+
+    var fileCache= {}
     var did = 1 // count instrument offset id
     tgt.process = function(file, data, type){
       if(type != "application/javascript") return data
@@ -591,7 +591,7 @@ function define(id,fac){
     var v = b.join('/')+ '/' + r
     if(v.charAt(0)!='/') v = '/'+v
     return v
-  }  
+  }
   //PACKEND
 //PACKSTART
   function def(id, fac){
@@ -618,7 +618,7 @@ function define(id,fac){
     var m = {exports:{}}
 
     var localreq = def.mkreq(id)
-  
+
     var ret = f(localreq, m.exports, m)
     if(ret) m.exports = ret
     def.module[id] = m
@@ -661,7 +661,7 @@ define('/core/fn',function(){
 
   if(console.log.bind)
     var fn = console.log.bind(console)
-  else 
+  else
     var fn = function(){
       var s = ''
       for(var i = 0;i<arguments.length;i++) s+= (s?', ':'')+arguments[i]
@@ -705,10 +705,10 @@ define('/core/fn',function(){
     for(var i = 0, j = a.length;i<j;i++) g[n[i]] = a[i]
     return g
   }
-  // |  left right linked list 
-  function list(l, r){ 
+  // |  left right linked list
+  function list(l, r){
 //    var u // unique id/
-//    var f // free slot 
+//    var f // free slot
     var b // begin
     var e // end
 
@@ -724,7 +724,7 @@ define('/core/fn',function(){
           for(var i in rm) li.rm(rm[i])
           rm = null
         }
-      } 
+      }
       li.add(a)
        return function(){
         if(a) li.rm(a)
@@ -736,7 +736,7 @@ define('/core/fn',function(){
     li.len = 0
     li.add = add
     li.rm  = rm
-    
+
     li.clear = function(){
       var n = b
       while(n){
@@ -756,7 +756,7 @@ define('/core/fn',function(){
 
     //|  add an item to the list
     function add(i){
-    
+
       if(arguments.length > 1){
         for(var i = 0, j = arguments.length; i<j; i++) add(arguments[i])
         return ln
@@ -805,7 +805,7 @@ define('/core/fn',function(){
 
       var t = 0
       if(b == i) b = i[r], t++
-      if(e == i) e = i[l], t++ 
+      if(e == i) e = i[l], t++
       if(i[r]){
         if(i[l]) i[r][l] = i[l]
         else delete i[r][l]
@@ -838,7 +838,7 @@ define('/core/fn',function(){
     li.each = function(c){
       var n = b
       var j = 0
-      var t 
+      var t
       while(n) {
         var x = n[r]
         v = c(n, li, j)
@@ -847,7 +847,7 @@ define('/core/fn',function(){
       }
       return t
     }
-    
+
     //|  check if item is in the list
     li.has = function(i){
       return l in i || r in i || b == i
@@ -891,7 +891,7 @@ define('/core/fn',function(){
     }
 
     o.clear = function(e, f){
-      var l = this.$l 
+      var l = this.$l
       if(!l) return
       delete l[e]
     }
@@ -948,7 +948,7 @@ define('/core/fn',function(){
       if(b == e) return null
       return st[b]
     }
-    
+
     //|  item on the top of the staci
     st.top = function(){
       if(b == e) return null
@@ -958,9 +958,9 @@ define('/core/fn',function(){
     //|  push item to the top of the stack
     function push(a){
       if(arguments.length > 1){
-        var r 
+        var r
         for(var i = 0, j = arguments.length; i<j; i++) r = push(arguments[i])
-        return r 
+        return r
       }
 
       st[e++] = a, st.len = ++l
@@ -969,7 +969,7 @@ define('/core/fn',function(){
     //|  pop item from the top of the stack
     st.pop = function(){
       var p = st[e - 1]
-      if(b != e){  
+      if(b != e){
         delete st[e]
         while(e != b && !(e in st)) e --
         if(!--l) st.beg = st.end = b = e = 1 // cancel drift
@@ -982,18 +982,18 @@ define('/core/fn',function(){
     //|  insert item at the bottom of the stack
     function shift(a){
       if(arguments.length > 1){
-        var r 
+        var r
         for(var i = 0, j = arguments.length; i<j; i++) r = push(arguments[i])
-        return r 
+        return r
       }
 
       st[--b] = a, st.len = ++l
       return st.beg = b
     }
-    
+
     //|  remove item at the bottom of the stack
     st.unshift = function(){
-      if(b != e){  
+      if(b != e){
         delete st[b]
         while(b != e && !(b in st)) b++
         if(!--l) st.beg = st.end = b = e = 1
@@ -1007,7 +1007,7 @@ define('/core/fn',function(){
       if(arguments.length > 2){
         var r
         for(var i = 0, j = arguments.length; i<j; i+=2) r = add(arguments[i], arguments[i+1])
-        return r 
+        return r
       }
       st[i] = v
       if(i < b) st.beg = b = i
@@ -1032,11 +1032,11 @@ define('/core/fn',function(){
 
     //|  iterate over all items in the stack
     st.each = function(c){
-      var r 
+      var r
       var v
       for(var i = b; i < e; i++){
         if(i in st){
-          v = c(st[i], st, i) 
+          v = c(st[i], st, i)
           if(v !== undefined) r = v
         }
       }
@@ -1050,7 +1050,7 @@ define('/core/fn',function(){
     var s = ""
     for(var i = 0;i<n;i++) s += parseInt(Math.random()*16).toString(16)
     return s.toLowerCase()
-  }  
+  }
 
   // |  pubsub for all your event needs
   function ps(il, ir){
@@ -1059,12 +1059,12 @@ define('/core/fn',function(){
     var of = li.fn
     li.fn = function(i){
       if(arguments.length == 1 && typeof i == 'function') return of(i) // pubsub
-      return li.run.apply(null, arguments) // otherwise forward the call to all 
+      return li.run.apply(null, arguments) // otherwise forward the call to all
     }
     return li
   }
 
-  // |  mersenne twister 
+  // |  mersenne twister
   // |  Inspired by http://homepage2.nifty.com/magicant/sjavascript/mt.js
   function mt(s, h){ // seed, itemarray or hash
     if (s === undefined) s = new Date().getTime();
@@ -1073,17 +1073,17 @@ define('/core/fn',function(){
       p = {}
       var j = 0
       for(var i in h) p[j++] = h[i]
-      t = j      
+      t = j
     }
     m = new Array(624)
-    
+
     m[0] = s >>> 0
     for (var i = 1; i < m.length; i++){
       var a = 1812433253
       var b = (m[i-1] ^ (m[i-1] >>> 30))
       var x = a >>> 16, y = a & 0xffff
       var c = b >>> 16, d = b & 0xffff;
-      m[i] = (((x * d + y * c) << 16) + y * d) >>> 0      
+      m[i] = (((x * d + y * c) << 16) + y * d) >>> 0
     }
     var i = m.length
 
@@ -1103,11 +1103,11 @@ define('/core/fn',function(){
         m[N - 1] = m[M - 1] ^ (v >>> 1) ^ ((v & 1) ? 0x9908b0df : 0)
         i = 0
       }
-      
+
       v = m[i++]
       v ^= v >>> 11, v ^= (v << 7) & 0x9d2c5680, v ^= (v << 15) & 0xefc60000, v ^= v >>> 18
       if(a!==undefined){
-        v = ((a >>> 5) * 0x4000000 + (v>>>6)) / 0x20000000000000 
+        v = ((a >>> 5) * 0x4000000 + (v>>>6)) / 0x20000000000000
         if(p) return p[ Math.round(v * ( t - 1 )) ]
         return v
       }
@@ -1117,7 +1117,7 @@ define('/core/fn',function(){
     return nx
   }
 
-  // |  sha1 
+  // |  sha1
   // |  Inspired by http://www.webtoolkit.info/javascript-sha1.html
   function sha1hex (m) {
     function rl(n,s){ return ( n<<s ) | (n>>>(32-s)) }
@@ -1146,21 +1146,21 @@ define('/core/fn',function(){
       return u
     }
     m = utf8(m)
-    
+
     var bs, i, j, u = new Array(80)
     var v = 0x67452301, w = 0xEFCDAB89, x = 0x98BADCFE, y = 0x10325476, z = 0xC3D2E1F0
     var a, b, c, d, e, t
     var l = m.length
-   
+
     var wa = []
     for(i=0; i<l-3; i+=4) j = m.charCodeAt(i)<<24 | m.charCodeAt(i+1)<<16 | m.charCodeAt(i+2)<<8 | m.charCodeAt(i+3), wa.push(j)
-   
+
      var r = l%4
      if(r == 0) i = 0x080000000
      else if(r == 1) i = m.charCodeAt(l-1)<<24 | 0x0800000
      else if(r == 2) i = m.charCodeAt(l-2)<<24 | m.charCodeAt(l-1)<<16 | 0x08000
      else i = m.charCodeAt(l-3)<<24 | m.charCodeAt(l-2)<<16 | m.charCodeAt(l-1)<<8  | 0x80
-   
+
     wa.push(i)
     while((wa.length % 16) != 14) wa.push( 0 )
     wa.push(l>>>29)
@@ -1169,9 +1169,9 @@ define('/core/fn',function(){
     for(bs=0; bs<wa.length; bs+=16){
        for(i=0; i<16; i++) u[i] = wa[bs+i]
       for(i=16; i<=79; i++) u[i] = rl(u[i-3] ^ u[i-8] ^ u[i-14] ^ u[i-16], 1)
-   
+
       a = v, b = w, c = x, d = y, e = z
- 
+
       for(i = 0;i <= 19;i++) t = (rl(a,5) + ((b&c) | (~b&d)) + e + u[i] + 0x5A827999) & 0x0ffffffff, e = d, d = c, c = rl(b,30), b = a, a = t
       for(i = 20;i <= 39;i++) t = (rl(a,5) + (b ^ c ^ d) + e + u[i] + 0x6ED9EBA1) & 0x0ffffffff, e = d,d = c,c = rl(b,30),b = a,a = t
       for(i = 40;i <= 59;i++) t = (rl(a,5) + ((b&c) | (b&d) | (c&d)) + e + u[i] + 0x8F1BBCDC) & 0x0ffffffff, e = d, d = c, c = rl(b,30), b = a, a = t
@@ -1187,17 +1187,17 @@ define('/core/fn',function(){
   }
 
   // |  wait for t milliseconds
-  function wait(t){ 
+  function wait(t){
     var p = ps()
     p.empty = function(){
       clearTimeout(i)
     }
-    var i = setTimeout(p, t) 
+    var i = setTimeout(p, t)
     return p;
   }
 
   // |  repeat with an interval of t milliseconds
-  function repeat(t){ 
+  function repeat(t){
     var p = ps()
     p.empty = function(){
       clearInterval(i)
@@ -1214,26 +1214,26 @@ define('/core/fn',function(){
   }
 
   // |  clamp things
-  function clamp(a, mi, ma){ 
-    return a<mi?mi:a>ma?ma:a 
+  function clamp(a, mi, ma){
+    return a<mi?mi:a>ma?ma:a
   }
 
   // |  min
-  function min(a, b){ 
-    return a<b?a:b 
+  function min(a, b){
+    return a<b?a:b
   }
 
   // |  max
-  function max(a, b){ 
-    return a>b?a:b 
+  function max(a, b){
+    return a>b?a:b
   }
 
   // |  delta time helper
   function dt(){
     var ci
-    if (typeof chrome !== "undefined" && typeof chrome.Interval === "function") 
+    if (typeof chrome !== "undefined" && typeof chrome.Interval === "function")
       ci = new chrome.Interval
-    
+
     var n = now()
 
     function now(){
@@ -1253,7 +1253,7 @@ define('/core/fn',function(){
     }
     return dt;
   }
-  
+
   // |  quick stacktrace
   function tr(){
     console.log(new Error().stack)
@@ -1275,17 +1275,17 @@ define('/core/fn',function(){
       }
     }
   }
-  
-  // |  dump objects to string 
-  function dump( 
-    d, // dump object 
-    o, // options {m:99 max depth,  p:0 pack, c:0  capacity, n:1 no recursion }*/, 
-    s, // internal string 
-    z, // internal depth 
+
+  // |  dump objects to string
+  function dump(
+    d, // dump object
+    o, // options {m:99 max depth,  p:0 pack, c:0  capacity, n:1 no recursion }*/,
+    s, // internal string
+    z, // internal depth
     r  // internal object stack
     ){
 
-    if(!s)s = [], r = [], z = 0; 
+    if(!s)s = [], r = [], z = 0;
     o = o || {};
     var k  // key for object enum
     var ic // indent current string
@@ -1297,8 +1297,8 @@ define('/core/fn',function(){
     var c = s.length // current output
 
     switch(typeof(d)){
-      case 'function': 
-      case 'object': 
+      case 'function':
+      case 'object':
         if(d == null) {
           s[c++] = "null"
           break
@@ -1311,7 +1311,7 @@ define('/core/fn',function(){
 
         if(o.p) ic = ic = nl = ""
         else    ic = Array(z + 2).join(' '), ip = Array(z + 1).join(' '), nl = "\n"
-          
+
         if(d.constructor == Array) {
           s[c++] = "[", s[c++] = nl
           for(k = 0; k < d.length; k++){
@@ -1974,14 +1974,14 @@ define('/core/acorn',function(require, exports, module){
   function readToken_caret() { // '^'
     var next = input.charCodeAt(tokPos+1);
     if (next === 61) return finishOp(_assign, 2);
-    return finishOp(_bin4, 1);    
+    return finishOp(_bin4, 1);
   }
 
   function readToken_plus_min(code) { // '+-'
     var next = input.charCodeAt(tokPos+1);
     if (next === code) return finishOp(_incdec, 2);
     if (next === 61) return finishOp(_assign, 2);
-    return finishOp(_plusmin, 1);    
+    return finishOp(_plusmin, 1);
   }
 
   function readToken_lt_gt(code) { // '<>'
@@ -1996,7 +1996,7 @@ define('/core/acorn',function(require, exports, module){
       size = input.charCodeAt(tokPos+2) === 61 ? 3 : 2;
     return finishOp(_bin7, size);
   }
-  
+
   function readToken_eq_excl(code) { // '=!'
     var next = input.charCodeAt(tokPos+1);
     if (next === 61) return finishOp(_bin6, input.charCodeAt(tokPos+2) === 61 ? 3 : 2);
@@ -2079,7 +2079,7 @@ define('/core/acorn',function(require, exports, module){
     // Identifier or keyword. '\uXXXX' sequences are allowed in
     // identifiers, so '\' also dispatches to that.
     if (isIdentifierStart(code) || code === 92 /* '\' */) return readWord();
-    
+
     var tok = getTokenFromCode(code);
 
     if (tok === false) {
@@ -2088,7 +2088,7 @@ define('/core/acorn',function(require, exports, module){
       var ch = String.fromCharCode(code);
       if (ch === "\\" || nonASCIIidentifierStart.test(ch)) return readWord();
       raise(tokPos, "Unexpected character '" + ch + "'");
-    } 
+    }
     return tok;
   }
 
@@ -2154,7 +2154,7 @@ define('/core/acorn',function(require, exports, module){
   }
 
   // Read an integer, octal integer, or floating-point number.
-  
+
   function readNumber(startsWithDot) {
     var start = tokPos, isFloat = false, octal = input.charCodeAt(tokPos) === 48;
     if (!startsWithDot && readInt(10) === null) raise(start, "Invalid number");
@@ -2317,7 +2317,7 @@ define('/core/acorn',function(require, exports, module){
   // ### Parser utilities
 
   // Continue to the next token.
-  
+
   function next() {
     lastStart = tokStart;
     lastEnd = tokEnd;
@@ -2570,7 +2570,7 @@ define('/core/acorn',function(require, exports, module){
       // In `return` (and `break`/`continue`), the keywords with
       // optional arguments, we eagerly look for a semicolon or the
       // possibility to insert one.
-      
+
       if (eat(_semi) || canInsertSemicolon()) node.argument = null;
       else { node.argument = parseExpression(); semicolon(); }
       return finishNode(node, "ReturnStatement");
@@ -2585,7 +2585,7 @@ define('/core/acorn',function(require, exports, module){
       // Statements under must be grouped (by label) in SwitchCase
       // nodes. `cur` is used to keep the node that we are currently
       // adding statements to.
-      
+
       for (var cur, sawDefault; tokType != _braceR;) {
         if (tokType === _case || tokType === _default) {
           var isCase = tokType === _case;
@@ -2645,7 +2645,7 @@ define('/core/acorn',function(require, exports, module){
       node = parseVar(node);
       semicolon();
       return node;
-  
+
   case _const:
     next();
     node = parseVar(node, false, "const")
@@ -2979,7 +2979,7 @@ define('/core/acorn',function(require, exports, module){
 
   // New's precedence is slightly tricky. It must allow its argument
   // to be a `[]` or dot subscript expression, but not a call — at
-  // least, not without wrapping it in parentheses. Thus, it uses the 
+  // least, not without wrapping it in parentheses. Thus, it uses the
 
   function parseNew() {
     var node = startNode();
@@ -3258,14 +3258,14 @@ define('/core/acorn_tools',function(require, exports, module){
     DoWhileStatement:     function(n){ return 'do'+sExp(n.body)+sSep+'while('+sExp(n.test)+')' },
     ReturnStatement:      function(n){ return 'return '+sExp(n.argument) },
     SwitchStatement:      function(n){ return 'switch('+sExp(n.discriminant)+'){'+sBlk(n.cases)+'}' },
-    SwitchCase:           function(n){ return 'case '+sExp(n.test)+':'+sSep+sBlk(n.consequent) },  
+    SwitchCase:           function(n){ return 'case '+sExp(n.test)+':'+sSep+sBlk(n.consequent) },
     WhileStatement:       function(n){ return 'while('+sExp(n.test)+')'+sExp(n.body) },
     WithStatement:        function(n){ return 'with('+sExp(n.object)+')'+sExp(n.body) },
     EmptyStatement:       function(n){ return '' },
     LabeledStatement:     function(n){ return sExp(n.label) + ':' + sSep + sExp(n.body) },
     BlockStatement:       function(n){ return '{'+sSep+sBlk(n.body)+'}' },
     ForStatement:          function(n){ return 'for('+sExp(n.init)+';'+sExp(n.test)+';'+sExp(n.update)+')'+sExp(n.body) },
-    ForInStatement:       function(n){ return 'for('+sExp(n.left)+' in '+sExp(n.right)+')'+sExp(n.body) },    
+    ForInStatement:       function(n){ return 'for('+sExp(n.left)+' in '+sExp(n.right)+')'+sExp(n.body) },
     VariableDeclarator:   function(n){ return sExp(n.id)+' = ' +sExp(n.init) },
     VariableDeclaration:  function(n){ return 'var '+sSeq(n.declarations) },
     SequenceExpression:   function(n){ return sSeq(n.expressions) },
@@ -3295,12 +3295,12 @@ define('/core/acorn_tools',function(require, exports, module){
       if(n.computed)  return sExp(n.object)+'['+sExp(n.property)+']'
       return sExp(n.object)+'.'+sExp(n.property)
     },
-    IfStatement:          function(n){ 
+    IfStatement:          function(n){
       return 'if('+sExp(n.test)+')' + sExp(n.consequent) + sSep +
-             (n.alternate ? 'else ' + sExp(n.alternate) + sSep : '') 
+             (n.alternate ? 'else ' + sExp(n.alternate) + sSep : '')
     },
     ThrowStatement:       function(n){ return 'throw '+sExp(n.argument) },
-    TryStatement:         function(n){ 
+    TryStatement:         function(n){
       return 'try '+sExp(n.block)+sSep+sBlk(n.handlers)+sSep+
              (n.finalizer? 'finally ' + sBlk(n.finalizer) : '')
     },
@@ -3338,7 +3338,7 @@ define('/core/acorn_tools',function(require, exports, module){
     p.__defineGetter__('fnscope', function(){ return this.d.parenL ? this.d.d : this.d.d.d })
     p.__defineGetter__('last', function(){ var t = this; while(t._d) t = t._d; return t })
     p.__defineGetter__('astParent', function(){ var t = this; while(t._d) t = t._d; return t })
-    
+
     // walker
     p.walk = function(cb){
       var n = this
@@ -3348,9 +3348,9 @@ define('/core/acorn_tools',function(require, exports, module){
       while(n && n != p){
         cb(n)
         if(n._c) n = n._c
-        else while(n != p){ 
-          if(n._d){ n = n._d; break } 
-          n = n._p 
+        else while(n != p){
+          if(n._d){ n = n._d; break }
+          n = n._p
         }
       }
     }
@@ -3359,7 +3359,7 @@ define('/core/acorn_tools',function(require, exports, module){
   function Node(){ }
   nodeProto(Node.prototype)
 
-  // acorn parse wrapper that also spits out a token tree  
+  // acorn parse wrapper that also spits out a token tree
   exports.parse = function(inpt, opts) {
     var h = {
       finishToken:finishToken,
@@ -3381,17 +3381,17 @@ define('/core/acorn_tools',function(require, exports, module){
     if(tokPos != 0) hack.tokTree.w = input.slice(0, tokPos)
   }
 
-  function finishToken(hack, type, val, input, tokStart, tokEnd, tokPos){  
+  function finishToken(hack, type, val, input, tokStart, tokEnd, tokPos){
     var tokTree = hack.tokTree
     var n
     if(type == types.eof) return
     if(type == types.regexp && tokTree._e && tokTree._e._t.binop == 10){
       // verify this one
-      n = tokTree._e, tokStart -= 1 
+      n = tokTree._e, tokStart -= 1
     } else if(hack.compact && tokTree._e && (type == types.name && tokTree._e._t == types.dot || type == types.dot && tokTree._e._t == types.name)){
       n = tokTree._e
       n._t = type
-      n.t += input.slice(tokStart, tokEnd)      
+      n.t += input.slice(tokStart, tokEnd)
     } else {
       var n = new Node()
       var t = tokTree
@@ -3409,7 +3409,7 @@ define('/core/acorn_tools',function(require, exports, module){
 
     if(type == types.braceL || type == types.bracketL || type == types.parenL){
       tokTree = n
-    } 
+    }
     else if(type == types.braceR || type == types.bracketR || type == types.parenR){
       if(hack.noclose){
         if(!tokTree._e._u) delete tokTree._c, delete tokTree._e
@@ -3417,7 +3417,7 @@ define('/core/acorn_tools',function(require, exports, module){
       }
       if(tokTree._p)
          tokTree = tokTree._p
-    } 
+    }
     hack.tokTree = tokTree
   }
 })
@@ -3478,7 +3478,7 @@ define('/core/io_channel',function(require, exports, module){
           return 1
         }
 
-        if(req.method == 'POST'){ // Message  
+        if(req.method == 'POST'){ // Message
           var d = ''
           req.on('data', function(i){ d += i.toString() })
           req.on('end', function(){
@@ -3534,7 +3534,7 @@ define('/core/io_channel',function(require, exports, module){
 
         function data(){
           while(e > 0 && r < i.length) o[w++] = i[r++] ^ h[m + (c++&3)], e--
-          if(e) return 
+          if(e) return
           var d = parse(o.toString('utf8', 0, w))
           if(ch.data && d && d.length) {
             for(var j = 0;j<d.length;j++) ch.data(d[j])
@@ -3559,7 +3559,7 @@ define('/core/io_channel',function(require, exports, module){
         }
 
         function len2(){
-          if(head()) return 
+          if(head()) return
           return l = h.readUInt16BE(w - 2), e = 4, s = mask
         }
 
@@ -3574,7 +3574,7 @@ define('/core/io_channel',function(require, exports, module){
 
         function pong(){
           if(head()) return
-          if(h[w-1] & 128) return e = 4, l = 0, s = mask 
+          if(h[w-1] & 128) return e = 4, l = 0, s = mask
           return e = 1, w = 0, s = opcode
         }
 
@@ -3650,7 +3650,7 @@ define('/core/io_channel',function(require, exports, module){
   }
   // | Browser Path
 
-  module.exports = 
+  module.exports =
   //CHANNEL
   function(url){
     var ch = {}
@@ -3766,7 +3766,7 @@ define('/core/io_channel',function(require, exports, module){
         if(d && ch.data) for(var i = 0;i<d.length;i++) ch.data(d[i])
       }
     }
-    
+
     if(typeof no_websockets !== "undefined" || typeof WebSocket === "undefined") poll()
     else websock()
     //poll()
@@ -3791,7 +3791,7 @@ define('/trace/instrument',function(require){
 
   function tracehub(){
     //TRACE
-    try{ _$_ } catch(e){ 
+    try{ _$_ } catch(e){
       _$_ = {};
       (function(){
         var isNode = typeof process != 'undefined'
@@ -3834,9 +3834,9 @@ define('/trace/instrument',function(require){
             }
             if(d>=max_depth) return "_$_{..}"
             var o = {}
-            var c = 0 
-            try{ 
-            var pd 
+            var c = 0
+            try{
+            var pd
             for(var k in i) if(pd = Object.getOwnPropertyDescriptor(i, k)){
               if(c++>max_count){
                 o["..."] = 1
@@ -3858,7 +3858,7 @@ define('/trace/instrument',function(require){
             if(m.reload) location.reload()
           }
           //_$_.ch = {send : function(){}}
-          window.onerror = function(error, url, linenr){}          
+          window.onerror = function(error, url, linenr){}
         } else if (isWorker){
           _$_.ch = {send : function(){}}
         } else if(isNode){
@@ -3874,9 +3874,9 @@ define('/trace/instrument',function(require){
         var dp = 0 // depth
         var di = 0
         var gc = 1
-        
+
         var lr = 0 // last return
-        
+
         // function call entry
 
         if(typeof global !== 'undefined'){
@@ -3908,7 +3908,7 @@ define('/trace/instrument',function(require){
             return r.g
           }
         }
-        
+
         // callsite annotation for last return
         _$_.c = function(i, v){
           if(!lr) return v
@@ -3941,7 +3941,7 @@ define('/trace/instrument',function(require){
           return v
         }
 
-      })()    
+      })()
     }
     //TRACE
   }
@@ -3968,15 +3968,15 @@ define('/trace/instrument',function(require){
           }
           for(var i = 0;i<v.length;i++) sv(v[i])
         }
-      */  
-  var head 
+      */
+  var head
   function mkHead(){
-  
+
     // imperfect newline stripper
     function strip(i){
       var t = acorn_tools.parse(i)
       var o = ''
-      t.tokens.walk(function(n){ 
+      t.tokens.walk(function(n){
         o+= n.t
         if(n.w.indexOf('\n')!=-1 && !n._c) o += ';'
         else if(n.w.indexOf(' ')!=-1) o+= ' '
@@ -4005,7 +4005,7 @@ define('/trace/instrument',function(require){
       return {
         input:src,//cutUp(cuts,src),
         output:src,
-        id:iid, 
+        id:iid,
         d:{}
       }
     }
@@ -4020,12 +4020,12 @@ define('/trace/instrument',function(require){
     function cut(i, v){
       if(i === undefined) throw new Error()
       var n = {i:i, v:v}
-      cuts.sorted(n, 'i') 
+      cuts.sorted(n, 'i')
       return n
     }
-    
+
     function instrumentFn(n, name, isRoot, parentId){
-      // if the first thing in the body is 
+      // if the first thing in the body is
       if(n.body && n.body.body && n.body.body[0] &&
         n.body.body[0].type == 'ExpressionStatement' &&
         n.body.body[0].expression.type == 'Literal' &&
@@ -4045,21 +4045,21 @@ define('/trace/instrument',function(require){
             ey:p.loc.end.line
           }
         }
-        
-        dict[id++] = {x:n.body.loc.start.column, y:n.body.loc.start.line, 
+
+        dict[id++] = {x:n.body.loc.start.column, y:n.body.loc.start.line,
           ex:n.body.loc.end.column,
           ey:n.body.loc.end.line,
           sx:n.loc.start.column,
           sy:n.loc.start.line,
-          n:name, 
+          n:name,
           a:args
         }
       } else {
         var fhead = cut(n.start, '')
-        dict[id++] = {x:n.loc.start.column, y:n.loc.start.line, 
+        dict[id++] = {x:n.loc.start.column, y:n.loc.start.line,
           ex:n.loc.end.column,
           ey:n.loc.end.line,
-          n:name, 
+          n:name,
           a:[],
           root:1
         }
@@ -4083,7 +4083,7 @@ define('/trace/instrument',function(require){
 
       function logicalExpression(n){
         var hasLogic = 0
-        // if we have logical expressions we only mark the if 
+        // if we have logical expressions we only mark the if
         acorn_tools.walkDown(n, {
           LogicalExpression:function(n, p){
             // insert ( ) around logical left and right
@@ -4104,7 +4104,7 @@ define('/trace/instrument',function(require){
         })
         return hasLogic
       }
-      
+
       function needSemi(p, pos){
         if(pos){
           var c = pos - 1
@@ -4117,8 +4117,8 @@ define('/trace/instrument',function(require){
           if(cc == '(') return false
         }
         return p.node.type == 'ExpressionStatement' &&
-            (p.up.node.type == 'BlockStatement' || 
-              p.up.node.type == 'Program' || 
+            (p.up.node.type == 'BlockStatement' ||
+              p.up.node.type == 'Program' ||
               p.up.node.type == 'SwitchCase')
       }
 
@@ -4130,11 +4130,11 @@ define('/trace/instrument',function(require){
             VariableDeclarator:  function(n, p){ return name = acorn_tools.stringify(n.id) },
             AssignmentExpression:function(n, p){ return name = acorn_tools.stringify(n.left) },
             ObjectExpression:    function(n, p){ return name = acorn_tools.stringify(p.key) },
-            CallExpression:      function(n, p){ 
+            CallExpression:      function(n, p){
               var id = '' // use deepest id as name
               acorn_tools.walkDown(n.callee, {Identifier: function(n){id = n.name}})
               if(id == 'bind') return
-              return name = (n.callee.type == 'FunctionExpression'?'()':id) + '->' 
+              return name = (n.callee.type == 'FunctionExpression'?'()':id) + '->'
             }
           })
           instrumentFn(n, name, false, fnid)
@@ -4152,7 +4152,7 @@ define('/trace/instrument',function(require){
         IfStatement: function(n, p){
           var b = n.test
           cut(b.start, gs+'b.b'+id+'=')
-          var m = dict[id++] = {x:n.loc.start.column, y:n.loc.start.line, 
+          var m = dict[id++] = {x:n.loc.start.column, y:n.loc.start.line,
             ex:n.test.loc.end.column + 1, ey:n.test.loc.end.line}
           // lets go and split apart all boolean expressions in our test
           if(logicalExpression(n.test)){
@@ -4166,13 +4166,13 @@ define('/trace/instrument',function(require){
           var b = n.test
           if(!logicalExpression(n.test)){
             cut(b.start, (needSemi(p, b.start)?';':'')+'('+gs+'b.b'+id+'=')
-            
+
             cut(b.end, ')')
-            dict[id++] = {x:b.loc.start.column, y:b.loc.start.line, 
+            dict[id++] = {x:b.loc.start.column, y:b.loc.start.line,
               ex:b.loc.end.column + 1, ey:b.loc.end.line}
           }
-        },        
-        SwitchCase : function(n, p){ 
+        },
+        SwitchCase : function(n, p){
           var b = n.test
           if(b){
             cut(n.colon, gs+'b.b'+id+'=1;')
@@ -4199,7 +4199,7 @@ define('/trace/instrument',function(require){
         CallExpression: function(n, p){
           // only if we are the first of a SequenceExpression
           if(p.node.type == 'SequenceExpression' && p.node.expressions[0] == n) p = p.up
-          cut(n.start, (needSemi(p, n.start)?';':'')+'('+gs+'.c('+id+',')          
+          cut(n.start, (needSemi(p, n.start)?';':'')+'('+gs+'.c('+id+',')
           cut(n.end - 1, "))")
           var a = []
           for(var i = 0;i<n.arguments.length;i++){
@@ -4218,7 +4218,7 @@ define('/trace/instrument',function(require){
         },
         NewExpression: function(n, p){
           if(p.node.type == 'SequenceExpression' && p.node.expressions[0] == n) p = p.up
-          cut(n.start, (needSemi(p, n.start)?';':'')+'('+gs+'.c('+id+',')          
+          cut(n.start, (needSemi(p, n.start)?';':'')+'('+gs+'.c('+id+',')
           cut(n.end, "))")
           var a = []
           for(var i = 0;i<n.arguments.length;i++){
@@ -4245,12 +4245,12 @@ define('/trace/instrument',function(require){
           // catch clauses need to send out a depth-reset message
           //cut(n.body.start + 1, gs + '.x('+gs+'d,'+gs+'b.x'+id+'='+ac.stringify(n.param)+');')
           cut(n.body.start + 1, gs+'b.x'+id+'='+acorn_tools.stringify(n.param)+';')
-          
+
           // lets store the exception as logic value on the catch
           dict[id++]= {x:n.loc.start.column, y:n.loc.start.line, ex:n.loc.start.column+5,ey:n.loc.start.line}
         }
       })
-  
+
       function addAssign(mark, inj){
         cut(inj, gs+"b.a"+id+"=")
         dict[id++] = {x:mark.start.column, y:mark.start.line,  ex:mark.end.column, ey:mark.end.line}
@@ -4279,13 +4279,13 @@ define('/trace/instrument',function(require){
         fhead.v = 'var '+gs+'g'+fnid+'=' +gs + ".f(" + fnid + ",null,0,0);" + s + tryStart
         cut(n.end, ";" + gs + ".e(" + id + "," + gs + "b)" + tryEnd)
         dict[id++] = {x:n.loc.end.column, y:n.loc.end.line, ret:fnid, root:1}
-      
+
       } else {
-        fhead.v = 'var '+gs+'g'+fnid+'=' +gs + ".f(" + fnid + ",arguments,this,"+gs+"g"+parentId+");" + s + tryStart 
+        fhead.v = 'var '+gs+'g'+fnid+'=' +gs + ".f(" + fnid + ",arguments,this,"+gs+"g"+parentId+");" + s + tryStart
         cut(n.body.end - 1, ";" + gs + ".e(" + id + "," + gs + "b)" + tryEnd)
         dict[id++] = {x:n.body.loc.end.column, y:n.body.loc.end.line, ret:fnid}
       }
-    }  
+    }
 
     instrumentFn(n, file, true, 0)
 
@@ -4302,14 +4302,14 @@ define('/trace/instrument',function(require){
       }
       s += str.slice(b)
       return s
-    }  
+    }
 
     //"_$_.set("+iid+",["+assignId.join(',')+"]);"
     return {
       input:src,//cutUp(cuts,src),
-      clean:cutUp(cuts, src), 
-      output:head + cutUp(cuts, src), 
-      id:id, 
+      clean:cutUp(cuts, src),
+      output:head + cutUp(cuts, src),
+      id:id,
       d:dict
     }
   }
@@ -4333,7 +4333,7 @@ define('/core/io_server',function(require){
     var hs = ssl?https.createServer(ssl, handler):http.createServer(handler)
 
     var ch = hs.ch = {}
-    
+
     hs.root = path.resolve(__dirname,'..')//process.cwd()
     hs.pass = 'X'
 
@@ -4365,7 +4365,7 @@ define('/core/io_server',function(require){
       if(req.url.indexOf('/io_') != 0) return
       var m = req.url.split('_')
 
-      if(m[2] != hs.pass) return console.log("invalid password in connection", m[2], hs.pass)    
+      if(m[2] != hs.pass) return console.log("invalid password in connection", m[2], hs.pass)
 
       var c = ch[m[1]]
       if(c) return c
@@ -4383,7 +4383,7 @@ define('/core/io_server',function(require){
       return c
     }
 
-    hs.on('upgrade', function(req, sock, head) { 
+    hs.on('upgrade', function(req, sock, head) {
       var c = chan(req)
       if(c)  c.upgrade(req, sock, head)
       else sock.destroy()
@@ -4397,7 +4397,7 @@ define('/core/io_server',function(require){
       "jpeg":"image/jpeg",
       "txt":"text/plain",
       "css":"text/css",
-      "ico": "image/x-icon",      
+      "ico": "image/x-icon",
       "png":"image/png",
       "gif":"image/gif"
     }
@@ -4417,7 +4417,7 @@ define('/core/io_server',function(require){
             "</head><body style='background-color:black' define-main='"+hs.main+"'>"+
             "<script src='/core/define.js'></script></body></html>"
           )
-          return  
+          return
         }
         else if(hs.packaged){
           var pkg = ''
@@ -4449,9 +4449,9 @@ define('/core/io_server',function(require){
             "<html><head><meta http-equiv='Content-Type' CONTENT='text/html; charset=utf-8'><title></title>"+
             "</head><body style='background-color:black'>"+
             "<script>"+pkg+"</script></body></html>"
-          )  
+          )
           return
-        }  
+        }
         name = 'index.html'
       }
 
@@ -4506,7 +4506,7 @@ define('/core/io_server',function(require){
       }
       var u = url.parse(req.url)
       var isJs = 0
-      // rip out caching if we are trying to access 
+      // rip out caching if we are trying to access
       //if(u.pathname.match(/\.js$/i)) isJs = u.pathname
       // turn off gzip
       delete opt.headers['accept-encoding']
@@ -4521,7 +4521,7 @@ define('/core/io_server',function(require){
       req.on('data', function(d){
         p_req.write(d)
       })
-      
+
       req.on('end', function(){
         p_req.end()
       })
@@ -4532,7 +4532,7 @@ define('/core/io_server',function(require){
         if(!isJs && p_res.headers['content-type'] && p_res.headers['content-type'].indexOf('javascript')!=-1){
           if(u.pathname.match(/\.js$/i)) isJs = u.pathname
           else isJs = '/unknown.js'
-        } 
+        }
         if(p_res.statusCode == 200 && isJs){
           var total = ""
           var output;
@@ -4571,7 +4571,7 @@ define('/core/io_server',function(require){
             res.end()
           })
         }
-      })  
+      })
 
     }
 
@@ -4624,7 +4624,7 @@ define('/core/gl_browser',function(require, exports, module){
           window.setTimeout(callback, 1000 / 60)
         }
     })()
-    
+
     cvs = document.createElement('canvas')
     div = document.body
 
@@ -4652,10 +4652,10 @@ define('/core/gl_browser',function(require, exports, module){
     cvs.height = (div.offsetHeight - 2) * ratio
 
     gl = cvs.getContext && cvs.getContext('experimental-webgl', {
-      antialias:false, 
+      antialias:false,
       premultipliedAlpha: false,
-      alpha: false, 
-      preserveDrawingBuffer: true 
+      alpha: false,
+      preserveDrawingBuffer: true
     })
 
     if(!gl){ // lets try to be helpful
@@ -4670,10 +4670,10 @@ define('/core/gl_browser',function(require, exports, module){
         var a = 'http://www.apple.com/feedback/safari.html'
         var w = 'install '+c+' for the best experience. Or '+m
         if(isChrome){
-          d += 'You seem to be running Chrome already, try updating your videocard drivers, updating '+c+', or running on a newer computer.<br/>' + m 
+          d += 'You seem to be running Chrome already, try updating your videocard drivers, updating '+c+', or running on a newer computer.<br/>' + m
         } else if(isIos){
-          d += 'Please help by <a href="' + a + '">asking Apple to enable WebGL in mobile safari.</a><br/>' 
-          d += 'For now, experience this on a desktop OS. '+m+'<br/>Or search for a '+gi 
+          d += 'Please help by <a href="' + a + '">asking Apple to enable WebGL in mobile safari.</a><br/>'
+          d += 'For now, experience this on a desktop OS. '+m+'<br/>Or search for a '+gi
         } else if(isSafari) {
           d += w+'<br/><br/>'+
           'To enable webGL in Safari (5.1 or higher) follow these 5 steps:<br/>'+
@@ -4683,10 +4683,10 @@ define('/core/gl_browser',function(require, exports, module){
           '   At the top of the screen between Bookmarks and Window a new Develop menu appears<br/>'+
           '4. Click the Develop menu at the top, and select Enable WebGL (last item at the bottom)<br/>'+
           '5. <a href="'+location.href+'">Click here to refresh the browser</a><br/>'
-          d += 'I know this is a hassle, you can help by <a href="'+a+'"+>asking Apple to enable WebGL by default.</a><br/>' 
+          d += 'I know this is a hassle, you can help by <a href="'+a+'"+>asking Apple to enable WebGL by default.</a><br/>'
         } else {
           d += w + '<br/>'
-          d += 'If you have Chrome already, just cut and paste "'+location.href+'" in the address bar of Chrome!<br>' 
+          d += 'If you have Chrome already, just cut and paste "'+location.href+'" in the address bar of Chrome!<br>'
         }
         div.style.backgroundColor = 'lightgray'
         div.style.font = '14px Monaco, Consolas'
@@ -4764,7 +4764,7 @@ define('/core/gl_browser',function(require, exports, module){
         document.body.style.cursor = cursor = c in ct? ct[c] : c
     }
 
-    var b = 0 // block anim 
+    var b = 0 // block anim
     gl.anim = function(c){
       if(b) return
       b = 1
@@ -4773,7 +4773,7 @@ define('/core/gl_browser',function(require, exports, module){
         c()
       })
     }
-    
+
     gl.ms = {
       x: -1,
       y: -1,
@@ -4800,7 +4800,7 @@ define('/core/gl_browser',function(require, exports, module){
       gl.mouse_p()
       cvs.focus()
       window.focus()
-    } 
+    }
 
     document.ondblclick = function(e){
       if(!dfd) return // its a double click drag
@@ -4854,7 +4854,7 @@ define('/core/gl_browser',function(require, exports, module){
       gl.ms.v = e.wheelDeltaY / n
       gl.mouse_s()
     }
-    
+
     // add hidden copy paste textarea
     var clip = document.createElement('textarea')
     clip.tabIndex = -1
@@ -4862,7 +4862,7 @@ define('/core/gl_browser',function(require, exports, module){
     clip.spellcheck = false
     clip.id = 'clipboard'
     clip.style.position = 'absolute'
-    clip.style.left = 
+    clip.style.left =
     clip.style.top = '-10px'
     clip.style.width =
     clip.style.height = '0px'
@@ -4950,7 +4950,7 @@ define('/core/gl_browser',function(require, exports, module){
       }
       //e.preventDefault()
     }
-    
+
     window.onkeypress = function(e){
       clearTimeout(ki)
       key(e, kc)
@@ -4976,7 +4976,7 @@ define('/core/gl_browser',function(require, exports, module){
     x.fillRect(0,0,c.width, c.height)
     x.fillStyle = 'white'
     x.textBaseline = 'top'
-    
+
     var n = document.createElement('span')
     n.innerHTML = 'giItT1WQy@!-/#'
     n.style.position = 'absolute'
@@ -4984,10 +4984,10 @@ define('/core/gl_browser',function(require, exports, module){
     n.style.font = 'normal normal normal 300px sans-serif'
     n.style.letterSpacing = '0'
     document.body.appendChild(n)
-    
+
     var w = n.offsetWidth
     n.style.fontFamily = ft
-    
+
     var i = setInterval(function(){
       if(n.offsetWidth != w) { //inconclusive in chrome
         x.font = '4px '+ft
@@ -5084,7 +5084,7 @@ define('/core/gl_browser',function(require, exports, module){
       function(s){
         o.src = window.webkitURL.createObjectURL(s)
         cb(o)
-      }, 
+      },
       function(e){
         fn(e)
       }
@@ -5117,7 +5117,7 @@ define('/core/gl_browser',function(require, exports, module){
       if(isChrome) d.f = function(){
         vec4_v = texture2D(s,vec2(c.x,c.y));
         return_vec4(v.x, v.y, v.z, pow(v.w,1.2))
-      } 
+      }
       else
       if(isGecko) d.f = function(){
         vec4_v = texture2D(s,vec2(c.x,c.y));
@@ -5141,7 +5141,7 @@ define('/core/gl_browser',function(require, exports, module){
     gl.deleteTexture(t)
     return t2
   }
-  
+
   // |  Create a subpixel font texture
   gl.sfont = function(f){ // font
     "no tracegl"
@@ -5238,7 +5238,7 @@ define('/core/gl_browser',function(require, exports, module){
     var x = c.getContext( "2d" )
 
     var t = gl.createTexture()
-    
+
     var o = {}
     if(typeof f == 'object') o = f, f = o.f || o.font
 
@@ -5249,7 +5249,7 @@ define('/core/gl_browser',function(require, exports, module){
     px = px * gl.ratio
     f = px+'px'+f.slice(n[0].length)
     // calculate grid size
-    //if(o.pow2) 
+    //if(o.pow2)
     gs = fn.nextpow2(px)
     //else gs = px + parseInt(px/4) + 1
     //gs = 32
@@ -5284,7 +5284,7 @@ define('/core/gl_browser',function(require, exports, module){
       var xp = i % t.b
       var yp = Math.floor(i / t.b)
       var ch = String.fromCharCode(i + t.s)
-      t.c[i] = Math.round(x.measureText(ch).width) 
+      t.c[i] = Math.round(x.measureText(ch).width)
       t.m[i] = t.c[i] + ia
       t.t[i] = (Math.floor( (( xp * gs - t.xp) / t.w) * 256 ) << 16) |
             (Math.floor( (( yp * gs) / t.h) * 256 ) << 24)
@@ -5305,7 +5305,7 @@ define('/core/gl_browser',function(require, exports, module){
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)        
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true)
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false)
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c)
@@ -5320,7 +5320,7 @@ define('/core/gl_browser',function(require, exports, module){
 // GL Shader compilers
 define('/core/gl',function(require, exports, module){
   var fn = require("./fn")
-  var gl = require("./gl_browser") 
+  var gl = require("./gl_browser")
   var acorn = require("./acorn")
   var acorn_tools = require("./acorn_tools")
 
@@ -5423,7 +5423,7 @@ define('/core/gl',function(require, exports, module){
         var ia = new ArrayBuffer(il)
       }
 
-      if(ob){ 
+      if(ob){
         var x = new Int32Array(ob.$va)
         var y = new Int32Array(va)
         for(var j = 0, l = ob.$vl >> 2; j < l; j++) y[j] = x[j] // because adding memcpy to a memblock API doesnt make sense...
@@ -5440,7 +5440,7 @@ define('/core/gl',function(require, exports, module){
         b.hi = 0 // high used
         b.$us = 0 // status counter
       }
-      
+
       if(sd.i){
         b.$ia = ia // index array
         b.i = {
@@ -5487,7 +5487,7 @@ define('/core/gl',function(require, exports, module){
       }
     }
   }).apply(Shader.prototype)
-  
+
   // uniform setter functions for shader
   var shader_us = {
     0: function(i){
@@ -5498,18 +5498,18 @@ define('/core/gl',function(require, exports, module){
         gl.uniform1i(this.$ul[i], tc)
       }
     },
-    1: function(i, u){ 
+    1: function(i, u){
       return function(x) {
         gl[u](this.$ul[i], x)
       }
     },
-    2: function(i, u){ 
+    2: function(i, u){
       return function(x, y) {
         if(typeof x == 'object') gl[u](this.$ul[i], x.x, x.y)
         else gl[u](this.$ul[i], x, y)
       }
     },
-    3: function(i, u){ 
+    3: function(i, u){
       return function(x, y, z) {
         if(typeof x == 'object') gl[u](this.$ul[i], x.x, x.y, x.z)
         else gl[u](this.$ul[i], x, y, z)
@@ -5544,7 +5544,7 @@ define('/core/gl',function(require, exports, module){
     for(var k in tc){ // walk the tracecache
       var v = tc[k]
       var p = n
-      while(v>0) p = n._p || n._b, v--, s += '^' 
+      while(v>0) p = n._p || n._b, v--, s += '^'
       var j = p[k]
       var t = typeof j
       if(p.hasOwnProperty(k)){ // clean up unregistered properties to getter/setters
@@ -5592,7 +5592,7 @@ define('/core/gl',function(require, exports, module){
     sd.y = sd.y || {}
     sd.u = sd.u || {}
     if(!sd.cache) sd.cache = {}
-    
+
     var vi = dn && dn.v || sd.v
     var fi = dn && dn.f || sd.f
 
@@ -5610,10 +5610,10 @@ define('/core/gl',function(require, exports, module){
     var ud = sh.$ud = {} // uniform deps
     var tl = sh.$tl = {} // texture list
     var nd = sh.$nd = {} // n dependencies
-    var tn // texture on n 
+    var tn // texture on n
 
     var dt = Date.now()
-    
+
     var fw  // function wraps
     var fd = {} // function definitions
     var in_f
@@ -5621,10 +5621,10 @@ define('/core/gl',function(require, exports, module){
 
     var fa = {} // frag attributes
     var ts = {} // texture slots
-    
-    var ti = 0 // texture id 
+
+    var ti = 0 // texture id
     var wi = 0 // function wrap id
-    
+
     // compiler output
     var oh  // output head
     var od  // output definitions
@@ -5693,11 +5693,11 @@ define('/core/gl',function(require, exports, module){
     }
     if(vu > 0) yf += 'varying vec'+(vu>1?vu:2)+' v_' + vs + ';\n'
 
-    var fs = 
+    var fs =
       'precision mediump float;\n' +
       '#define ucol vec4\n' +
       oh + od + yf + yd + fw  +
-      'void main(void){\n'+ yb + ob + 
+      'void main(void){\n'+ yb + ob +
       ' gl_FragColor = '
 
     // generate multiple fragments
@@ -5712,7 +5712,7 @@ define('/core/gl',function(require, exports, module){
     // parse and generate vertexshader
     oh = ob = od = '', pd = {}, fw = '', in_f = false
     oe = expr(cs, 0, 0, ns)
-    // glpoint unit expression 
+    // glpoint unit expression
     if(sd.p) ob += ' gl_PointSize = ' + expr(sd.p, 0, 0, ns) + ';\n'
 
     for(var i in ad){
@@ -5720,16 +5720,16 @@ define('/core/gl',function(require, exports, module){
       od += 'attribute ' + ad[i] + ' ' + i + ';\n'
     }
 
-    var vs = 
+    var vs =
       '#define ucol vec4\n' +
       oh + od + yf + fw + '\n' +
-      'void main(void){\n'+ yv + ob + 
+      'void main(void){\n'+ yv + ob +
       ' gl_Position = ' + oe + ';\n' +
     '}\n'
 
     if(sd.dbg || (dn && dn.dbg)){
       var o = ''
-      for(var i in sf) o +=  '---- fragment shader '+i+' ----\n' + sf[i]  
+      for(var i in sf) o +=  '---- fragment shader '+i+' ----\n' + sf[i]
       fn('---- vertex shader ----\n' + vs + o)
       /*
       fn('---- trace cache ----\n')
@@ -5743,7 +5743,7 @@ define('/core/gl',function(require, exports, module){
     var gv = gl.createShader(gl.VERTEX_SHADER)
     gl.shaderSource(gv, vs)
     gl.compileShader(gv)
-    if (!gl.getShaderParameter(gv, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(gv) + "\n" + vs)        
+    if (!gl.getShaderParameter(gv, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(gv) + "\n" + vs)
 
     sh.$sf = {}
     for(var i in sf) sh.$sf[i] = frag(gv, sf[i])
@@ -5761,7 +5761,7 @@ define('/core/gl',function(require, exports, module){
     gl.totalCompiletime += Date.now() - dt
 
     sid = fnid(vi, dn) + '|' + fnid(fi, dn)
-    
+
     sh.$id = sid
     sd.cache[sid] = sh
 
@@ -5821,7 +5821,7 @@ define('/core/gl',function(require, exports, module){
           for(var i = p._c; i; i = i._d) if(i.name) ma[i.t] = a[++c < 0 ? 0 : c]
         }
 
-        while(p && !p.braceL) p = p._d // skip to the function body  
+        while(p && !p.braceL) p = p._d // skip to the function body
       } else {
         p = p._p // skip back up
       }
@@ -5829,8 +5829,8 @@ define('/core/gl',function(require, exports, module){
       function subexpr(i, f, lv, ns){ // iter parse, function, local variables,  nodestruct
         var c = f._c || (f._c = f.toString().replace(/[;\s\r\n]*/g,''))
         var e = f._e
-        if(!e) f._e = e =c.indexOf('_fw_') != -1 ? 3 : 
-                         c.indexOf('return_') != -1 ? 2 : 
+        if(!e) f._e = e =c.indexOf('_fw_') != -1 ? 3 :
+                         c.indexOf('return_') != -1 ? 2 :
                          c.indexOf('return') != -1 ? 4 : 1
 
         var ar // args
@@ -5852,8 +5852,8 @@ define('/core/gl',function(require, exports, module){
           }
           i.t = i.t+'('+ar.join(',')+')'
         }
-        else if(e == 3){ // its a function wrapper 
-          // lets parse out return type 
+        else if(e == 3){ // its a function wrapper
+          // lets parse out return type
           var m = c.match(/([a-zA-Z0-9_]*)\_fw\_([a-zA-Z0-9_]*)/)
           var v = m[1] || 'vec4'
           var o = 'vec2 c'
@@ -5882,7 +5882,7 @@ define('/core/gl',function(require, exports, module){
         if(!ce) f._ce = ce = f.toString()
         var p = acorn_tools.parse(ce,{noclose:1, compact:1, tokens:1}).tokens._c
         //var p = ep(ce)._c // parse code and fetch first child
-        
+
         var i // iterator
         var lv = {}// local variables
         var rt // return type
@@ -5899,9 +5899,9 @@ define('/core/gl',function(require, exports, module){
         }
         os = t + os + ')'
 
-        while(p && !p.braceL) p = p._d // skip to the function body  
+        while(p && !p.braceL) p = p._d // skip to the function body
         i = p
-        
+
         while(i){
           while(i.braceL){
             os += '{\n'
@@ -5930,7 +5930,7 @@ define('/core/gl',function(require, exports, module){
             if(!j) throw new Error("assignment without terminating ; found")
             os += y + ' ' + k + ' ' + i._d.t + ' ' + expand(i._d._d, j, lv, ns) + ';'
             i = j
-          } else           
+          } else
           if(i.name && i._d && i._d.parenL){
             var o = i.t.indexOf('_'), y
             if(o != 0 && gt.types[y = i.t.slice(0,o)]){
@@ -5967,7 +5967,7 @@ define('/core/gl',function(require, exports, module){
             os += 'for(' + y +' '+ expand(p1, p2, lv, ns) + ';' + expand(p2._d, p3, lv, ns) + ';' + expand(p3._d, 0, lv, ns) + ')'
             i = i._d._d
           }
-          else{ 
+          else{
             os +=  i.t + ' '
           }
           while(i && !i._d && i != p){
@@ -5997,12 +5997,12 @@ define('/core/gl',function(require, exports, module){
             var t = (o = i.t.indexOf('.')) != -1 ? i.t.slice(0, o) : i.t
 
             if(t in ma) i.t = ma[t] // expand macro arg
-            else if(o==0){} // property 
+            else if(o==0){} // property
             else if(lv && (t in lv)){} // local variable
             else if(t in pd){} // previously defined
             else if(t in sd.d) // define
               pd[t] = oh += '#define ' + t + ' ' + sd.d[t] + '\n'
-            else if(t in gt.cv4) // color 
+            else if(t in gt.cv4) // color
               pd[t] = oh += '#define ' + t + ' ' + gt.cv4[t] + '\n'
             else  if(t == 't' && o != -1){ // theme palette access
               var k = i.t.slice(o+1)
@@ -6017,9 +6017,9 @@ define('/core/gl',function(require, exports, module){
             }
             else if(t in sd.u) // uniform
               pd[t] = ud[t] = sd.u[t], oh += 'uniform ' + ud[t] + ' ' + t + ';\n'
-            else if(t in sd.a){ // attribute 
+            else if(t in sd.a){ // attribute
               in_f ? fa[t] = ad[t] = sd.a[t] : ad[t] = sd.a[t]
-            } 
+            }
             else if(t == 'n' || t == 'p'){
               var n2 = ns
               var k = i.t.slice(o+1)
@@ -6042,7 +6042,7 @@ define('/core/gl',function(require, exports, module){
                 if(n2.n.l || is_tex){ // make it a node uniform
                   var lu = {d:n2.dp || 0, k:k}
                   k = n2.np + k
-                  if(is_tex){ 
+                  if(is_tex){
                     if(!tn) tn = sh.$tn = {} // texture n ref
                     tn[k] = lu
                   }
@@ -6068,7 +6068,7 @@ define('/core/gl',function(require, exports, module){
               pd[t] = 1
             }
             else if(ns.n.e && t in ns.n.e) // node ext lib
-              subexpr(i, ns.n.e[t], lv, ns) 
+              subexpr(i, ns.n.e[t], lv, ns)
             else if(t in sd.e)
               subexpr(i, sd.e[t], lv, ns) // glsl expression
             else if(!(t in gt.types || t in gt.builtin)){ // undefined
@@ -6076,20 +6076,20 @@ define('/core/gl',function(require, exports, module){
               throw new Error("undefined variable used:" + t + " in " + f)
             }
           } else if(i.string){
-            if(!in_f) throw new Error("texture not supported in vertex shader")  
+            if(!in_f) throw new Error("texture not supported in vertex shader")
             if(!(i.t in ts)){
               var o = ts[i.t] = '_'+(ti++)
               ud[o] = 'sampler2D'
               var t = i.t.slice(1, -1)
-              tl[o] = gl.loadImage(t) // use 
+              tl[o] = gl.loadImage(t) // use
               oh += 'uniform sampler2D '+o+';\n'
             }
             i.t = ts[i.t]
           }
-          if(i.comma) ea.push(os), os = '' 
+          if(i.comma) ea.push(os), os = ''
           else if(i.parenL) os+= '(' + expand(i._c, null, lv, ns).join(',') + ')'
           else os += i.t
-        
+
           i = i._d
         }
         ea.push(os)
@@ -6098,7 +6098,7 @@ define('/core/gl',function(require, exports, module){
       return expand(p._c,0,lv,ns)[0]
     }
   }
-  
+
   // |  evaluate a float shader expression in js
   // JS version of the expression compiler
   function js_expr(f, a, un, el, rd){ // function, args
@@ -6108,7 +6108,7 @@ define('/core/gl',function(require, exports, module){
     var id = f._i
     if(!c) f._c = c = f.toString()
     if(!id) f._i = id = fnid_o[c] || (fnid_o[c] = fnid_c++)
-    
+
     var p = acorn_tools.parse(c,{noclose:1, compact:1, tokens:1}).tokens._c
     var i // iterator
     var m = {} // macro args
@@ -6122,7 +6122,7 @@ define('/core/gl',function(require, exports, module){
         for(i = p._c; i; i = i._d) if(i.name) m[i.t] = a[++c < 0 ? 0 : c]
       }
 
-      while(p && !p.braceL) p = p._d // skip to the function body  
+      while(p && !p.braceL) p = p._d // skip to the function body
     } else{
       p = p._p
     }
@@ -6132,9 +6132,9 @@ define('/core/gl',function(require, exports, module){
       if(!c) f._c = c = f.toString().replace(/[;\s\r\n]*/g,'')
 
       var e = f._e
-      if(!e) f._e = e = c.indexOf('_fw_') != -1 ? 3 : 
-                       c.indexOf('return_') != -1 ? 2 : 
-                       c.indexOf('return') != -1 ? 4 :1        
+      if(!e) f._e = e = c.indexOf('_fw_') != -1 ? 3 :
+                       c.indexOf('return_') != -1 ? 2 :
+                       c.indexOf('return') != -1 ? 4 :1
       var a // args
       if(i._d && i._d.parenL){
         a = expand(i._d._c), i._d.t = i._d._t = ''
@@ -6176,9 +6176,9 @@ define('/core/gl',function(require, exports, module){
             fn(un)
             throw new Error("undefined variable used in JS expression:(" + t + ")")
           }
-        } 
+        }
         else if(i.string) throw new Error("texture not supported in JS expressions")
-        if(i.comma) a.push(s), s = '' 
+        if(i.comma) a.push(s), s = ''
         else if(i.parenL) s+= '(' + expand(i._c).join(',') + ')'
         else s += i.t
         i = i._d
@@ -6197,7 +6197,7 @@ define('/core/gl',function(require, exports, module){
       var e = js_expr(f, 0, un, el, rd) // compile it
       rd.b += 'return '+e+'\n'
       fnid_ev[f] = j = Function('n','p','__u','__e','__b','__x', rd.b)
-    }    
+    }
     // actual evaluation
     return j(n, n._p || n._b, un, el, gt.builtin, gl.eval)
   }
@@ -6242,7 +6242,7 @@ define('/core/gl',function(require, exports, module){
     if (!gl.getShaderParameter(vs, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(vs))
 
     sp = gl.createProgram()
-    gl.attachShader(sp, vs), 
+    gl.attachShader(sp, vs),
     gl.attachShader(sp, fs),
     gl.linkProgram(sp)
 
@@ -6339,12 +6339,12 @@ define('/core/gl',function(require, exports, module){
       round:Math.round,
       min:Math.min,
       max:Math.max,
-      // logic      
+      // logic
       all:function(a){ return a != 0 },
       any:function(a){ return a != 0 },
       not:function(a){ return a == 0 },
       clamp:function(a, mi, ma) {return a < mi ? mi : a > ma ? ma : a },
-      roundEven:function(a) { return Math.round(a / 2) * 2 },      
+      roundEven:function(a) { return Math.round(a / 2) * 2 },
       equal:function(a, b) { return a == b },
       greaterThan:function(a, b) { return a > b },
       greaterThanEqual:function(a, b) { return a >= b },
@@ -6417,7 +6417,7 @@ define('/core/gl',function(require, exports, module){
     var cv4 = {}
     for(var i = 0;i < ci.length;i += 2){
       var s = ''    // output string
-      var p = ci[i] // fetch the 8 bytes per lookup word combiner 
+      var p = ci[i] // fetch the 8 bytes per lookup word combiner
       while(p)  s = wd[p&0x7f] + s, p = p >> 7 // rebuild the strange word
       var c = ci[i + 1]
       var sl = s.toLowerCase()
@@ -6449,11 +6449,11 @@ define('/core/gl',function(require, exports, module){
       if(t == 'object')     a[o] = i.x,  a[o + 1] = i.y
       else if(t == 'array') a[o] = i[0], a[o + 1] = i[1]
       else                  a[o] = a[o + 1] = parseFloat(i[0])
-      if(m <= 1) return 
+      if(m <= 1) return
       var x = a[o], y = a[o + 1], o2 = o + s
       while(m > 1) a[o2] = x, a[o2 + 1] = y, m--, o2 += s
     }
-   
+
     // stringify stored vec2)
     function _v2(a, o, m, s) {
       var v = '|'+ a[o] + ' ' + a[o + 1] + ''
@@ -6513,7 +6513,7 @@ define('/core/gl',function(require, exports, module){
       var x = a[o], o2 = o + s
       while(m > 1) v += '|' + a[o2] + ' ' + a[o2 + 1] + ' ' + a[o2 + 2] + ' ' + a[o2 + 3] + '', m--, o2 += s
       return v
-    }   
+    }
 
     // color JS value type to vertexbuffer parser
     function co(i, a, o, m, s){
@@ -6536,12 +6536,12 @@ define('/core/gl',function(require, exports, module){
 
     // stringify stored color)
     function _co(a, o, m, s) {
-      var v = '|'+ a[o] 
+      var v = '|'+ a[o]
       if(m <= 1) return v
       var x = a[o], o2 = o + s
       while(m > 1) v += '|' + a[o2], m--, o2 += s
       return v
-    }       
+    }
   }
   gt()
 
@@ -6553,28 +6553,28 @@ define('/core/gl',function(require, exports, module){
     if(!s.indexOf("vec4")) {
       c = s.slice(5,-1).split(",")
       return {r:parseFloat(c[0]), g:parseFloat(c[1]), b:parseFloat(c[2]),a:parseFloat(c[3])}
-    } 
+    }
     if(!s.indexOf("rgba")) {
       c = s.slice(5,-1).split(",")
       return {r:parseFloat(c[0])/255, g:parseFloat(c[1])/255, b:parseFloat(c[2])/255,a:parseFloat(c[3])}
-    } 
+    }
     if(!s.indexOf("rgb")) {
       c = s.slice(4,-1).split(",")
       return {r:parseFloat(c[0])/255, g:parseFloat(c[1])/255, b:parseFloat(c[2])/255,a:1.0}
-    } 
+    }
     if(c = gt.col[s])
-      return c  
-  }  
+      return c
+  }
 
   function packColor(c){
-    return (c.a*255<<24)&0xff000000 | ((c.b*255<<16)&0xff0000) | (c.g*255<<8)&0xff00 | (c.r*255)&0xff 
+    return (c.a*255<<24)&0xff000000 | ((c.b*255<<16)&0xff0000) | (c.g*255<<8)&0xff00 | (c.r*255)&0xff
   }
 
   gl.parseColor = parseColor
   gl.packColor = packColor
   // ABGR
   gl.uniform1ic = function(i, u){  gl.uniform4f(i,(u&0xff)/255,((u>>8)&0xff)/255,((u>>16)&0xff)/255,((u>>24)&0xff)/255) }
-  
+
   //|  a fullscreen shader with buffer
   gl.getScreenShader = function(sd){
     var d = {
@@ -6583,7 +6583,7 @@ define('/core/gl',function(require, exports, module){
       a:{c:'vec2'},
       v:'vec4(c.x * 2. -1, 1. - c.y * 2., 0, 1.)'
     }
-    for(var k in sd) d[k]  = sd[k]  
+    for(var k in sd) d[k]  = sd[k]
 
     var sh = gl.getShader(d)
 
@@ -6592,16 +6592,16 @@ define('/core/gl',function(require, exports, module){
     a[0] = a[1] = a[3] = a[7] = a[10] = a[4] = 0
     a[2] = a[5] = a[6] = a[8] = a[9] = a[11] = 1
     b.hi = 1
-    return sh 
+    return sh
   }
 
-  //|  debug wrap whole GL api  
+  //|  debug wrap whole GL api
   function debug(stack){
     if('__createTexture' in gl) return
-    
+
     var glrev = {}
     for(var k in gl){
-      if(k == 'debug' || k == 'undebug' || k == 'eval' || k == 'regvar' || 
+      if(k == 'debug' || k == 'undebug' || k == 'eval' || k == 'regvar' ||
         k == 'parseColor') continue;
       if(typeof gl[k] == 'function'){
         gl['__'+k] = gl[k];
@@ -6635,7 +6635,7 @@ define('/core/gl',function(require, exports, module){
         var k2 = k.slice(2)
         gl[k2] = gl[k]
         delete gl[k]
-      }  
+      }
     }
   }
   gl.undebug = undebug
@@ -6648,7 +6648,7 @@ define('/core/ext_lib',function(require, exports){
 
   var e = exports
 
-  e.i0 = function(){ clamp(step(0, -n.a0) + (u - n.t0)/n.a0, 0, 1) } 
+  e.i0 = function(){ clamp(step(0, -n.a0) + (u - n.t0)/n.a0, 0, 1) }
   e.i1 = function(){ clamp(step(0, -n.a1) + (u - n.t1)/n.a1, 0, 1) }
   e.i2 = function(){ clamp(step(0, -n.a2) + (u - n.t2)/n.a2, 0, 1) }
   e.i3 = function(){ clamp(step(0, -n.a3) + (u - n.t3)/n.a3, 0, 1) }
@@ -6712,17 +6712,17 @@ define('/core/ext_lib',function(require, exports){
   }
 
   e.pixel = function(x, y, _fw_){
-    _fw_(vec2(floor((c.x-.5)*x)/x,floor((c.y-.5)*y)/y)+.5) 
+    _fw_(vec2(floor((c.x-.5)*x)/x,floor((c.y-.5)*y)/y)+.5)
   }
 
   e.normal_ = function(float_ln, float_n1, float_n2, float_n3){
-    return_vec3( 
+    return_vec3(
       cross(
         normalize(vec3(0,ln,n2-n1)),
         normalize(vec3(ln,0,n3-n1))
       )
 
-      
+
     );
   }
 
@@ -6739,7 +6739,7 @@ define('/core/ext_lib',function(require, exports){
      float_t3 = t2*t;
      return_float((2*t3 - 3*t2 + 1)*p0 + (t3-2*t2+t)*m0 + (-2*t3+3*t2)*p1 + (t3-t2)*m1);
   }
-  
+
   e.normal = function(ds, ln, float_fw_vec2_c){
     normal_(ln,
           float_fw_vec2_c(vec2(c.x, c.y)),
@@ -6749,8 +6749,8 @@ define('/core/ext_lib',function(require, exports){
 
   e.img = function(a){
     texture2D(a, vec2(c.x, c.y))
-  }  
-  
+  }
+
   e.font = function(){
     texture2D(n.b,vec2(e.z, e.w))
   }
@@ -6777,12 +6777,12 @@ define('/core/ext_lib',function(require, exports){
   e.blend = function(vec4_a, vec4_b){
     return_vec4( a.xyz * (1-b.w) + (b.w)*b.xyz, max(a.w,b.w) )
   }
-  
+
   e.subpix = function(vec4_c, vec4_fg, vec4_bg){
     float_a(3.2*(t.subpx).w)
     return_vec4(vec4(pow(c.r * pow(fg.r, a) + (1-c.r) * pow(bg.r, a), 1/a),
            pow(c.g * pow(fg.g, a) + (1-c.g) * pow(bg.g, a), 1/a),
-           pow(c.b * pow(fg.b, a) + (1-c.b) * pow(bg.b, a), 1/a), 
+           pow(c.b * pow(fg.b, a) + (1-c.b) * pow(bg.b, a), 1/a),
            c.a*fg.a)*1.0)
   }
 
@@ -6791,7 +6791,7 @@ define('/core/ext_lib',function(require, exports){
     float_a(3.2*(t.subpx).w)
     return_vec4(vec4(pow(c.r * pow(fg.r, a) + (1-c.r) * pow(bg.r, a), 1/a),
            pow(c.g * pow(fg.g, a) + (1-c.g) * pow(bg.g, a), 1/a),
-           pow(c.b * pow(fg.b, a) + (1-c.b) * pow(bg.b, a), 1/a), 
+           pow(c.b * pow(fg.b, a) + (1-c.b) * pow(bg.b, a), 1/a),
            c.a*fg.a))
   }
 
@@ -6799,7 +6799,7 @@ define('/core/ext_lib',function(require, exports){
     vec4_c( texture2D(n.b, vec2(e.z, e.w)) )
     return_vec4(vec4(pow(c.r * pow(fg.r, a) + (1-c.r) * pow(bg.r, a), 1/a),
            pow(c.g * pow(fg.g, a) + (1-c.g) * pow(bg.g, a), 1/a),
-           pow(c.b * pow(fg.b, a) + (1-c.b) * pow(bg.b, a), 1/a), 
+           pow(c.b * pow(fg.b, a) + (1-c.b) * pow(bg.b, a), 1/a),
            c.a*fg.a))
   }
 
@@ -6835,11 +6835,11 @@ define('/core/ext_lib',function(require, exports){
   // Seriously awesome GLSL noise functions. (C) Credits and kudos go to
   // Stefan Gustavson, Ian McEwan Ashima Arts
   // Google keywords: GLSL simplex noise
-  // MIT License. 
+  // MIT License.
   e.permute1 = function(float_x) {
     return_float( mod((34.0 * x + 1.0) * x, 289.0) );
   }
-  
+
   e.permute3 = function(vec3_x) {
     return_vec3( mod((34.0 * x + 1.0) * x, 289.0) );
   }
@@ -6847,7 +6847,7 @@ define('/core/ext_lib',function(require, exports){
   e.permute4 = function(vec4_x) {
     return_vec4( mod((34.0 * x + 1.0) * x, 289.0) );
   }
-  
+
   e.isqrtT1 = function(float_r){
     return_float(1.79284291400159 - 0.85373472095314 * r);
   }
@@ -6857,7 +6857,7 @@ define('/core/ext_lib',function(require, exports){
   }
 
   e.snoise2 = function(vec2_v){
-    vec4_C = vec4(0.211324865405187,0.366025403784439,-0.577350269189626,0.024390243902439); 
+    vec4_C = vec4(0.211324865405187,0.366025403784439,-0.577350269189626,0.024390243902439);
     vec2_i  = floor(v + dot(v, C.yy) );
     vec2_x0 = v -   i + dot(i, C.xx);
 
@@ -6884,7 +6884,7 @@ define('/core/ext_lib',function(require, exports){
     return_float(130.0 * dot(m, g));
   }
 
-  e.snoise3 = function(vec3_v){ 
+  e.snoise3 = function(vec3_v){
     vec2_C = vec2(1.0/6.0, 1.0/3.0);
     vec4_D = vec4(0.0, 0.5, 1.0, 2.0);
 
@@ -6901,9 +6901,9 @@ define('/core/ext_lib',function(require, exports){
 
     // Permutations
     i = mod(i, 289.0);
-    vec4_p = permute4(permute4(permute4( 
+    vec4_p = permute4(permute4(permute4(
       i.z + vec4(0.0, i1.z, i2.z, 1.0))
-      + i.y + vec4(0.0, i1.y, i2.y, 1.0)) 
+      + i.y + vec4(0.0, i1.y, i2.y, 1.0))
       + i.x + vec4(0.0, i1.x, i2.x, 1.0));
 
     // ( N*N points uniformly over a square, mapped onto an octahedron.)
@@ -6937,7 +6937,7 @@ define('/core/ext_lib',function(require, exports){
     // Mix final noise value
     vec4_m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
     m = m * m;
-    return_float(42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), 
+    return_float(42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1),
       dot(p2,x2), dot(p3,x3) ) ));
   }
 
@@ -6947,7 +6947,7 @@ define('/core/ext_lib',function(require, exports){
     p.xyz = floor( fract (vec3(j) * ip.xyz) * 7.0) * ip.z - 1.0;
     p.w = 1.5 - dot(abs(p.xyz), vec3(1.0,1.0,1.0));
     vec4_s = vec4(lessThan(p, vec4(0.0)));
-    p.xyz = p.xyz + (s.xyz*2.0 - 1.0) * s.www; 
+    p.xyz = p.xyz + (s.xyz*2.0 - 1.0) * s.www;
     return_vec4(p);
   }
 
@@ -7209,7 +7209,7 @@ define('/core/ui_draw',function(require, exports, module){
         ui.alloc(n, sh)
         // set our default values on c
         rect.set(n._v.c, n._s, 0, 1)
-        n._v.up = 1 // todo, partial updates properly        
+        n._v.up = 1 // todo, partial updates properly
 
         // update all the rest of the variables
         ui.update(n)
@@ -7276,7 +7276,7 @@ define('/core/ui_draw',function(require, exports, module){
         l = 0
         for(var i = 0; i < m; i++){
           var c = t.charCodeAt(i)
-          if(c>32) l++ 
+          if(c>32) l++
         }
         n._n = l
         // compile shaders
@@ -7308,7 +7308,7 @@ define('/core/ui_draw',function(require, exports, module){
             var wn = b.m[d] + 2*b.xp
             var x2 = x + (wn / ui.gl.ratio)
             var y2 = y + (b.g / ui.gl.ratio)
- 
+
             var tx1 = ((d % b.b) * b.g - b.xp) / b.w
             var ty1 = (floor(d / b.b) * b.g) / b.h
             var tx2 = tx1 + (wn / (b.w))
@@ -7321,28 +7321,28 @@ define('/core/ui_draw',function(require, exports, module){
             a[o] = x2, a[o+1] = y2, a[o+2] = tx2, a[o+3] = ty2, o += s
             a[o] = x,  a[o+1] = y2, a[o+2] = tx1, a[o+3] = ty2, o += s
 
-            x += b.c[d] / ui.gl.ratio 
+            x += b.c[d] / ui.gl.ratio
 
-          } 
+          }
           else if(c == 10) y += b.g/ ui.gl.ratio , x = 0
-          else if(c == 32) x += b.m[0]/ ui.gl.ratio 
-          else if(c == 9) x += 3 * b.m[0]/ ui.gl.ratio 
+          else if(c == 32) x += b.m[0]/ ui.gl.ratio
+          else if(c == 9) x += 3 * b.m[0]/ ui.gl.ratio
           if(x > w) w = x
         }
         // store width and height
-        n.w = ui.text.pos(n, m).x, n.h = y + b.p/ ui.gl.ratio 
-        n._v.up = 1     
+        n.w = ui.text.pos(n, m).x, n.h = y + b.p/ ui.gl.ratio
+        n._v.up = 1
 
         if(n._v.c) text.set(n._v.c, n._s, l, 0, 1)
 
-        ui.update(n)        
+        ui.update(n)
       }
 
       if(g) n.set(g)
 
       return n
     }
-    
+
     text.clear = function(n){
       text.set(n._v.e, n._s, n._i, 0, 0)
       n._v.up = 1
@@ -7376,7 +7376,7 @@ define('/core/ui_draw',function(require, exports, module){
       var b = n.b // bitmap font
       var x = 0
       var y = 0
-      var w = 0 
+      var w = 0
       var t = n.t
       var ratio = ui.gl.ratio
       for(var i = 0;i < l; i++){
@@ -7385,7 +7385,7 @@ define('/core/ui_draw',function(require, exports, module){
         if(c > 32){
           var d = c - b.s
           w = b.m[d] + 2*b.xp
-          x += b.c[d] 
+          x += b.c[d]
         } else if(c == 10) y += b.p, x = 0
         else if(c == 32) x += b.m[0]
         else if(c == 9) x += 3 * b.m[0]
@@ -7393,7 +7393,7 @@ define('/core/ui_draw',function(require, exports, module){
       return {x:x / ratio, y:y / ratio}
     }
     ui.text = text
-    
+
     // |  edge
     function edge(g){
       var n = new ui.Node()
@@ -7456,11 +7456,11 @@ define('/core/ui_draw',function(require, exports, module){
           a[o] = 0, a[o+1] = 1, o += s
           a[o] = 1, a[o+1] = 1, o += s
           a[o] = 0, a[o+1] = 1, o += s
-          a[o] = 1, a[o+1] = 1, o += s        
+          a[o] = 1, a[o+1] = 1, o += s
         }
         n._v.clean = false
 
-        ui.update(n)        
+        ui.update(n)
       }
 
       if(g) n.set(g)
@@ -7502,9 +7502,9 @@ define('/core/ui',function(require){
 
     // coordinates
     x : 'x',
-    y : 'y', 
+    y : 'y',
     z : 'z',
-    w : 'width', 
+    w : 'width',
     h : 'height',
     d : 'depth',
 
@@ -7539,7 +7539,7 @@ define('/core/ui',function(require){
     _g : 'groupid',
 
     // dom hyper tree
-    _p : 'parent', 
+    _p : 'parent',
     _c : 'child',
     _u : 'up',
     _d : 'down',
@@ -7552,7 +7552,7 @@ define('/core/ui',function(require){
 
     _e : 'end', // last node added
     _t : 'type',
-    
+
     // render
     _q : 'qbuf',
     _v : 'vb',
@@ -7648,9 +7648,9 @@ define('/core/ui',function(require){
     y : 0,
     w : 'p.w_ - n.x',
     h : 'p.h_ - n.y',
-    _x : 'p.x_ + n.x',    
-    _y : 'p.y_ + n.y',    
-    _w : 'n.w',    
+    _x : 'p.x_ + n.x',
+    _y : 'p.y_ + n.y',
+    _w : 'n.w',
     _h : 'n.h',
     t : ''
   }
@@ -7683,12 +7683,12 @@ define('/core/ui',function(require){
     }
 
     p.alias = function(k, o, setCb){
-      this.__defineSetter__(k, function(v){ 
-        o[k] = v 
+      this.__defineSetter__(k, function(v){
+        o[k] = v
         if(setCb) setCb()
       })
-      this.__defineGetter__(k, function(){ 
-        return o[k] 
+      this.__defineGetter__(k, function(){
+        return o[k]
       })
     }
 
@@ -7697,11 +7697,11 @@ define('/core/ui',function(require){
     }
 
     p.calc = function(k, c){
-      this.__defineSetter__(k, function(v){ 
+      this.__defineSetter__(k, function(v){
         delete this[k]
         this[k] = v
       })
-      this.__defineGetter__(k, function(){ 
+      this.__defineGetter__(k, function(){
         return c()
       })
     }
@@ -7726,7 +7726,7 @@ define('/core/ui',function(require){
       p.__defineSetter__(k, function(v){
         // setting a group callback
         if(!(this._g in group)) group[this._g = parseInt(groupRnd() * 0xffffff)|0xff000000] = this
-//        if(!(this._g in group)) group[this._g = groupId++|0xff000000] = this 
+//        if(!(this._g in group)) group[this._g = groupId++|0xff000000] = this
         this[pt] = v
       })
       p.__defineGetter__(k, function(){ return this[pt] })
@@ -7780,8 +7780,8 @@ define('/core/ui',function(require){
       var pk = '$'+k
       var nk = 'N'+k
       node_vs[k] = 1
-      p.__defineSetter__(k, function(v){ 
-      
+      p.__defineSetter__(k, function(v){
+
         if(this._9){ // already initialized, check vb or call update
           var t = typeof this[pk]
           var y = typeof v
@@ -7792,7 +7792,7 @@ define('/core/ui',function(require){
             this.$$()
           }
         } else this[pk] = v
-        
+
       })
       p.__defineGetter__(k, function(){
         if(pk in this) return this[pk]
@@ -7802,7 +7802,7 @@ define('/core/ui',function(require){
     }
 
     node_vs['_g'] = 1
-    
+
     vs('f')
     vs('t')
     vs('x')
@@ -7817,7 +7817,7 @@ define('/core/ui',function(require){
     vs('_y')
     vs('_w')
     vs('_h')
-    
+
     // hook regvar
     gl.regvar = function(k){
       if(k in node_vs) return
@@ -7972,7 +7972,7 @@ define('/core/ui',function(require){
 
     if(t) t.log('initnew: ')
   }
-  
+
   // | updates vertexbuffers
   ui.update = function(n){
     if(!n._v) return
@@ -7982,11 +7982,11 @@ define('/core/ui',function(require){
     var nm = n._i || 1
     for(var i in vt){
       var v = n._v[i]
-      var ln = v.n // fetch lookup 
+      var ln = v.n // fetch lookup
       if(ln){ // if we dont have a lookup, its an internal attribute
         var d = ln.d // scan up to depth * parents
         var k = ln.k // key on that node
-        var p = n 
+        var p = n
         while(d) p = p._p || p._b, d-- // go to parent
         if(p != n){ // mark our dependency on the parent
           if(!p._a) p._a = {}
@@ -8004,13 +8004,13 @@ define('/core/ui',function(require){
     if(sh.$ud.t){
       if(!l_t.has(n)) l_t.add(n)
       gl.anim(ui.draw)
-    } 
+    }
     else if(l_t.has(n)) l_t.rm(n)
 
     var v // vertex buffer
     var s = -1 // slot id
     var m = '_n' in  n ? n._n : 1
-  
+
     // fingerprint texture references
     var tn = sh.$tn
     var id = sh.$id
@@ -8038,19 +8038,19 @@ define('/core/ui',function(require){
           if(!n._v.$us) n._v.hi = n._v.lo = 0
         }
         else { // keep slot, but clear data
-          n._t.clear(n) 
+          n._t.clear(n)
           var o = n._o || (n._o = {}) // slot by id
           var k = n._k || (n._k = {}) // written buffers by id
-          o[n._v.$id] = n._s // cache old slot 
+          o[n._v.$id] = n._s // cache old slot
           k[n._v.$id] = n._v // cache old buffer
         }
 
         // cache lookup new
-        if(n._k && (v = n._k[id])) n._s = s = n._o[id], n._v = v 
+        if(n._k && (v = n._k[id])) n._s = s = n._o[id], n._v = v
 
       } else v = n._v
     } else n._i = -1
-      
+
     if(!v){ // find/make new vertexbuffer
       var l = n // layer node
       while(!l.l){
@@ -8134,7 +8134,7 @@ define('/core/ui',function(require){
     v.$us -= m
 
     if(n._k && n._k[v.$id]) delete n._k[v.$id] // remove from cache
-    if(n._s == v.hi - m){ // we are at the top 
+    if(n._s == v.hi - m){ // we are at the top
       v.hi -= m
     } else if(n._s == v.lo) v.lo += m // at the bottom
     else n._t.clear(n) // else in the middle somewhere
@@ -8154,7 +8154,7 @@ define('/core/ui',function(require){
     delete n._k
   }
 
-  // |  unhook node, leave all refs node->tree 
+  // |  unhook node, leave all refs node->tree
   function unhook(n){
     var p = n._p
     if(!p){
@@ -8174,7 +8174,7 @@ define('/core/ui',function(require){
     unhook(n)
     // notify parent
     if(n._p && n._p.r_) n._p.r_(n)
-    
+
     // optimally walk non layer tree
     var i = n
     do {
@@ -8281,7 +8281,7 @@ define('/core/ui',function(require){
       if(n.f_){ ui.focus(n); return;}
       n = n._d
     }
-    if(!n) n = ui.foc._p._c 
+    if(!n) n = ui.foc._p._c
     while(n){
       if(n.f_){ ui.focus(n); return;}
       n = n._d
@@ -8304,7 +8304,7 @@ define('/core/ui',function(require){
       n = n._u
     }
   }
-  
+
   ui.key = {}
 
   gl.keydown(function(){
@@ -8324,7 +8324,7 @@ define('/core/ui',function(require){
 
   // |  event bubble
   ui.bubble = function(n, e){
-    //check if there is a modal flag in the parent chain 
+    //check if there is a modal flag in the parent chain
     var p = n
     while(p){
       if(p._m) break
@@ -8332,7 +8332,7 @@ define('/core/ui',function(require){
     }
     if(!p) return
     if(n[e]){
-      if(typeof n[e] == 'object') { 
+      if(typeof n[e] == 'object') {
         n.set(n[e])
         return 1
       } else if(n[e](n)) return 1
@@ -8377,7 +8377,7 @@ define('/core/ui',function(require){
     if(t) v.y += t
     if(r) v.w -= r
     if(b) v.h -= b
-    
+
     return {
       x:(ui.mx - v.x) / v.w,
       y:(ui.my - v.y) / v.h
@@ -8462,12 +8462,12 @@ define('/core/ui',function(require){
         var sh
         var b
         for(var k in z) if(sh = (b = z[k]).$sh){
-          
+
           sh.use()
           sh.n(b.$n)
           sh.set(uni)
           sh.draw(b)
-        } 
+        }
         z = z.d
       }
     }
@@ -8485,7 +8485,7 @@ define('/core/ui',function(require){
     var vx1 = gl.eval(n, n._x, uni, el)
     var vy1 = gl.eval(n, n._y, uni, el)
     var vx2 = vx1 + gl.eval(n, n._w, uni, el)
-    var vy2 = vy1 + gl.eval(n, n._h, uni, el)    
+    var vy2 = vy1 + gl.eval(n, n._h, uni, el)
     if(ui.mx >= vx1 && ui.my >= vy1 && ui.mx < vx2 && ui.my < vy2){
 
       var q = n._q
@@ -8499,7 +8499,7 @@ define('/core/ui',function(require){
             sh.n(b.$n)
             sh.set(uni)
             sh.draw(b)
-          } 
+          }
           z = z.d
         }
       }
@@ -8508,7 +8508,7 @@ define('/core/ui',function(require){
       while(q){
         if(q.l !== -1) drawGroupID(q)
         q = q._2
-      }  
+      }
       //if(n._0) n._0.each(drawGroupID)
     }
   }
@@ -8519,7 +8519,7 @@ define('/core/ui',function(require){
   ui.move = true
   // |  render UI
   ui.draw = function(){
-    renderTime.reset()    
+    renderTime.reset()
     //dc = 0
     initnew()
     ui.frame()
@@ -8533,7 +8533,7 @@ define('/core/ui',function(require){
     //gl.clear(gl.COLOR_BUFFER_BIT)
     //gl.colorMask(true, true, true, false)
     gl.disable(gl.BLEND)
-  
+
     // lets draw a 1 pixel window under the mouse for group id
     if(ui.cap){
       var n = ui.cap
@@ -8546,7 +8546,7 @@ define('/core/ui',function(require){
         sx = ui.mx
         sy = gl.height - ui.my - 1
       }
-        
+
       //gl.scissor(0, gl.height-1, 1, 1)
       gl.scissor(sx, sy, 2, 2)
 
@@ -8557,7 +8557,7 @@ define('/core/ui',function(require){
       } else {
         uni.l.x = -ui.mx
         uni.l.y = -ui.my
-      }      
+      }
 
       drawGroupID(root)
       // read pixel for picktest
@@ -8643,7 +8643,7 @@ define('/core/ui',function(require){
         } else {
           ui.redraw(n)
           n = n[_r]
-        } 
+        }
       }
       if(l_a[k].len) e = 1
     }
@@ -8662,13 +8662,13 @@ define('/core/ui',function(require){
     gl.mouse_m(function(){ gl.anim(ui.draw) })
     gl.mouse_r(function(){ md = 0, ui.md = 0, gl.anim(ui.draw) })
     gl.mouse_s(function(){
-      ms = 1, gl.anim(ui.draw) 
+      ms = 1, gl.anim(ui.draw)
     })
     gl.mouse_u(function(){ dc = 1, gl.anim(ui.draw) })
     return gl.resize(function(){
       ui.redraw()
     })
-  }  
+  }
 
   // |  force a redraw
   ui.redraw = function(n){
@@ -8699,7 +8699,7 @@ define('/core/ui',function(require){
     if(y2 > dirty.y2) dirty.y2 = y2
     gl.anim(ui.draw)
   }
-  
+
   // |  dump
   ui.dump = function(n, dv){
     var s = ''
@@ -8745,7 +8745,7 @@ define('/core/controls_mix',function(require, exports){
       if(b.c_) b.c_()
     }
     function nr(){ // normal
-      if(!d) return 
+      if(!d) return
       d = 0
       if(b.n_) b.n_()
       return 1
@@ -8803,19 +8803,19 @@ define('/core/controls_mix',function(require, exports){
 
     var x = 0
     var y = 0 // y of mouse
-    k.p = function(){  
-      ui.cap = k 
+    k.p = function(){
+      ui.cap = k
       x = ui.mx
-      y = ui.my 
-      r = b.mv 
+      y = ui.my
+      r = b.mv
       if(k.c_) k.c_()
     }
-    k.m = function(){  
+    k.m = function(){
       if(ui.cap == k){
         var d = v?(ui.my - y):(ui.mx - x)
         ds( d * (b.ts / b.eval(v?'h':'w')) )
         x = ui.mx
-        y = ui.my 
+        y = ui.my
       }
       ui.gl.cursor('default')
       return 1
@@ -8865,7 +8865,7 @@ define('/core/controls_mix',function(require, exports){
       r = b.eval('mv')
       ds(y)
     }
-      
+
     b.p = function(n){
       if(n != b) return // press event from child
       //ui.focus(b)
@@ -8874,15 +8874,15 @@ define('/core/controls_mix',function(require, exports){
       var l = ui.rel(k)
       ds( (v?l.y:l.x)<0?-0.1:0.1 )
     }
-    
+
     b.f_ = function(){
       if(!ui.cap && k.f_) k.f_()
     }
-    
+
     b.u_ = function(){
       if(!ui.cap && k.u_) k.u_()
     }
-    
+
     b.k = function(){
       switch(ui.key.i){
         case 'home': r = 0;ds(0); break
@@ -8898,24 +8898,24 @@ define('/core/controls_mix',function(require, exports){
 
     var y = 0
     var x = 0
-    k.p = function(){  
+    k.p = function(){
       if(ui.cap)  return
-      ui.cap = k 
+      ui.cap = k
       ui.focus(b)
-      y = ui.my 
+      y = ui.my
       x = ui.mx
       r =  b.eval('mv')
       if(k.c_) k.c_()
       return 1
     }
-    k.m = function(){  
+    k.m = function(){
       if(ui.cap == k){
         if(v)
           ds( (ui.my - y) / ( b.eval('h') - k.eval('h') ) )
         else
           ds( (ui.mx - x) / ( b.eval('w') - k.eval('w') ) )
         x = ui.mx
-        y = ui.my 
+        y = ui.my
       }
     }
     k.r = function(){
@@ -8928,10 +8928,10 @@ define('/core/controls_mix',function(require, exports){
     b.alias('mv', k)
   }
 
-  // |  list 
+  // |  list
   cm.list = function(b){
     var ty = 0 // total y
-    
+
     function cs(){ // clamp scroller
       if(b._v_){
         var v = b._v_
@@ -8961,7 +8961,7 @@ define('/core/controls_mix',function(require, exports){
       }
       cs()
     }
-    
+
     b.s = function(){ // mouse scroll
       if(b._v_) b._v_.ds(ui.mv)
     }
@@ -9011,7 +9011,7 @@ define('/core/controls_mix',function(require, exports){
     }
 
     // add selection handling
-    b.m = 
+    b.m =
     b.p = function(n){ // mouse press
       if(!ui.md || ui.cap) return
       ui.focus(b)
@@ -9030,13 +9030,13 @@ define('/core/controls_mix',function(require, exports){
       if(s && ui.key.i == 'end') se(ui.last(s))
     }
   }
-  
+
   // |  drag
   cm.drag = function(b, c){
     var d
     var mx
     var my
-    var sx 
+    var sx
     var sy
     c.p = function(){ // grab to start drag
       if(ui.bubble(c._p,'p')) return 1 // give parent option to capture first
@@ -9080,7 +9080,7 @@ define('/core/controls_mix',function(require, exports){
         return 1
       }
     }
-    
+
     b.m = function(n){
       if(ui.cap == b){ // resize
         var dx = ui.mx - mx
@@ -9089,7 +9089,7 @@ define('/core/controls_mix',function(require, exports){
         if(bx == 2) b.w = fn.min(b.maxw || 9999, fn.max(b.minw || 50, ov.w + dx))
         if(by == 1) b.h = fn.min(b.maxh || 9999, fn.max(b.minh || 50, ov.h - dy)), b.y = ov.y - (b.h - ov.h)
         if(by == 2) b.h = fn.min(b.maxh || 9999, fn.max(b.minh || 50, ov.h + dy))
-        ui.redraw(b)        
+        ui.redraw(b)
         return
       }
       //if(n != b) return
@@ -9108,15 +9108,15 @@ define('/core/controls_mix',function(require, exports){
     b.o = function(){
       ui.cursor('default')
     }
-    
+
     b.r = function(){
       if(ui.cap == b) ui.cap = 0
       bx = by = 0
     }
   }
 
-  // |  split 
-  cm.hSplit = function(b, d, v){ // background, divider, 
+  // |  split
+  cm.hSplit = function(b, d, v){ // background, divider,
     var c = 0
     var n1
     var n2
@@ -9167,8 +9167,8 @@ define('/core/controls_mix',function(require, exports){
     }
   }
 
-  // |  split 
-  cm.vSplit = function(b, d){ // background, divider, 
+  // |  split
+  cm.vSplit = function(b, d){ // background, divider,
     var c = 0
     var n1
     var n2
@@ -9219,12 +9219,12 @@ define('/core/controls_mix',function(require, exports){
       ui.cap = 0
     }
   }
-  // |  fold 
+  // |  fold
   cm.fold = function(g){
     var b
   }
 
-  // |  editing 
+  // |  editing
   cm.edit = function(b, t, c, s, m){ // background, text, cursor, select, marked
 
     var cs = 0, ce = 0 // cursor / range
@@ -9242,7 +9242,7 @@ define('/core/controls_mix',function(require, exports){
       })
       return l
     }
-    
+
     function scr(){
       // scroll cursor into view
       var ps = ui.text.pos(t, cs)
@@ -9254,7 +9254,7 @@ define('/core/controls_mix',function(require, exports){
       var sw = t.b.m[32-t.b.s] / ui.gl.ratio
       var w = bv.w - sw - (tv.x - bv.x)
       if(pe.x > -b.xs + w)  b.xs = -(pe.x - w)
-      if(pe.x < -b.xs - sw) b.xs = -pe.x -sw 
+      if(pe.x < -b.xs - sw) b.xs = -pe.x -sw
       if(pt.x < -b.xs + w && pt.x > w) b.xs += (-b.xs + w) - pt.x
     }
 
@@ -9263,7 +9263,7 @@ define('/core/controls_mix',function(require, exports){
     }
 
     function mark(ms, me, re){
-      if(me === undefined) me = ms  
+      if(me === undefined) me = ms
       cs = fn.clamp(ms, 0, t.t.length)
       ce = fn.clamp(me, 0, t.t.length)
       var ps = ui.text.pos(t, cs)
@@ -9288,8 +9288,8 @@ define('/core/controls_mix',function(require, exports){
         m.t = ""
       }
       ui.redraw(b)
-      // put m.t in 
-    } 
+      // put m.t in
+    }
 
     b.m = function(){
       // do selection
@@ -9298,7 +9298,7 @@ define('/core/controls_mix',function(require, exports){
       mark(cs, gc())
       return 1
     }
-    
+
     b.o = function(){
       ui.cursor('default')
     }
@@ -9351,11 +9351,11 @@ define('/core/controls_mix',function(require, exports){
       var last = b.t
       switch(ui.key.i){
       case 'up':
-      case 'home': 
+      case 'home':
         kca(0)
         break
       case 'down':
-      case 'end': 
+      case 'end':
         kca(t.t.length)
         break
       case 'right':
@@ -9411,10 +9411,10 @@ define('/core/controls_mix',function(require, exports){
     }
   }
 
-  // |  slides 
+  // |  slides
   cm.slides = function(b){
     var cp = 0
-    var tp = 0 
+    var tp = 0
     var vp = 0
     var np = 0
 
@@ -9442,7 +9442,7 @@ define('/core/controls_mix',function(require, exports){
 
     b.k = function(){
       switch(ui.key.i){
-      case 'home': 
+      case 'home':
         vp = 0
         break
       case 'end':
@@ -9454,7 +9454,7 @@ define('/core/controls_mix',function(require, exports){
       case 'left':
         if(vp>0)  vp --
         break
-      }      
+      }
     }
   }
 })
@@ -9470,7 +9470,7 @@ define('/core/controls',function(require, exports){
   ct.f1p = ui.gl.pfont("12px Arial")
 
   // shared style functions
-  var bump = 'mix(black, n.hc, (0.5 + 0.5 * dot(vec3(1,0,0),normal(0.001, 0.001, n.hm))))' 
+  var bump = 'mix(black, n.hc, (0.5 + 0.5 * dot(vec3(1,0,0),normal(0.001, 0.001, n.hm))))'
 
   // |  bumpmapped button
   ct.button = function(g){
@@ -9494,11 +9494,11 @@ define('/core/controls',function(require, exports){
     t.b = ct.f1s
 
     // states
-    b.f_ = 
-    b.s_ = 
+    b.f_ =
+    b.s_ =
     b.i = function(){ t.a1 = b.a1 = -0.01 }
-    b.u_ = 
-    b.d_ = 
+    b.u_ =
+    b.d_ =
     b.o = function(){  t.a1 = b.a1 = 0.1 }
     b.n_ = function(){ b.a0 = -0.1, b.e0 = { hm : bu } }
     b.c_ = function(){ b.a0 = 0.01, b.e0 = 0, b.hm = bd }
@@ -9515,7 +9515,7 @@ define('/core/controls',function(require, exports){
 
     return b
   }
-  
+
   // |  hiding vertical scrollbar
   ct.vScrollHider = function(g){
     "no tracegl"
@@ -9523,14 +9523,14 @@ define('/core/controls',function(require, exports){
     var b = ui.rect()
     var k = ui.rect()
     k._p = b
-    b.e = k.e = ct.el 
+    b.e = k.e = ct.el
 
     // behavior
     cm.scroll(b, k, 1)
 
     // style
     b.f = 'vec4(0,0,0,0)'
-    
+
     b.shape = k.shape = function(vec2_v){
       return_float(len(vec2(pow(abs(v.x),n.w/15),pow(abs(v.y),n.h/5))))
     }
@@ -9539,12 +9539,12 @@ define('/core/controls',function(require, exports){
     k.f = 'mix(vec4(0,0,0,0),vec4(.4,.4,.4,1-n.i1),1-smoothstep(0.8,1.0,n.shape(2*(c-.5))) )'
 
     var hider
-    var inout 
+    var inout
     // states
-    b.i = 
+    b.i =
     k.i = function(){ b.a1 = k.a1 = -0.01; inout = 1; if(hider)clearTimeout(hider), hider = 0 }
-    b.o = 
-    k.o = function(){  
+    b.o =
+    k.o = function(){
       if(hider) clearTimeout(hider)
       hider = setTimeout(function(){
         hider = 0
@@ -9560,7 +9560,7 @@ define('/core/controls',function(require, exports){
     b.move = function(){
       if(inout) return
       if(hider) clearTimeout(hider)
-      else b.a1 = k.a1 = -0.1 
+      else b.a1 = k.a1 = -0.1
       hider = setTimeout(function(){
         hider = 0
         b.a1 = k.a1 = 0.5
@@ -9606,17 +9606,17 @@ define('/core/controls',function(require, exports){
     k.f = 'mix(vec4(0,0,0,0),vec4(.5,.5,.5,1-n.i1),1-smoothstep(0.8,1.0,n.shape(2*(c-.5))) )'
 
     var hider
-    var inout 
+    var inout
     // states
-    b.i = 
+    b.i =
     k.i = function(){
       b.a1 = k.a1 = -0.01;
       inout = 1;
       if(hider) clearTimeout(hider), hider = 0;
     }
-    
-    b.o = 
-    k.o = function(){  
+
+    b.o =
+    k.o = function(){
       if(hider) clearTimeout(hider)
       hider = setTimeout(function(){
         hider = 0
@@ -9633,7 +9633,7 @@ define('/core/controls',function(require, exports){
     b.move = function(){
       if(inout) return
       if(hider) clearTimeout(hider)
-      else b.a1 = k.a1 = -0.1 
+      else b.a1 = k.a1 = -0.1
       hider = setTimeout(function(){
         hider = 0
         b.a1 = k.a1 = 0.5
@@ -9661,7 +9661,7 @@ define('/core/controls',function(require, exports){
     var b = ui.rect()
     var k = ui.rect()
     k._p = b
-    b.e = k.e = ct.el 
+    b.e = k.e = ct.el
 
     // behavior
     cm.scroll(b, k, 1)
@@ -9765,7 +9765,7 @@ define('/core/controls',function(require, exports){
     h._z = Infinity
 
     var sw = 10  // scrollbar width
-  
+
     // scroll corner
     var c = ct.hvFill({x:'p.w_ - '+sw, y:'p.h_ - '+sw, w:sw, h:sw})
     c._b = b
@@ -9787,7 +9787,7 @@ define('/core/controls',function(require, exports){
     b.v_ = cv
 
     b.mark = 1
-    b.s = function(){ 
+    b.s = function(){
       v.ds(ui.mv)
       h.ds(ui.mh)
     }
@@ -9825,7 +9825,7 @@ define('/core/controls',function(require, exports){
     // states
     k.f_=
     k.i = function(){ k.a1 = -0.01 }
-    k.u_= 
+    k.u_=
     k.o = function(){  k.a1 = 0.1 }
     k.n_ = function(){ k.a0 = -0.1, k.e0 = {hm:bu} }
     k.c_ = function(){ k.a0 = 0.01, k.e0 = 0, k.set({hm:bd}) }
@@ -9850,7 +9850,7 @@ define('/core/controls',function(require, exports){
     var b = ui.rect()
     var k = ui.rect()
     k._p = b
-    
+
     // behavior
     cm.slider(b, k, false)
 
@@ -9866,7 +9866,7 @@ define('/core/controls',function(require, exports){
     // states
     k.f_=
     k.i = function(){ k.a1 = -0.01 }
-    k.u_= 
+    k.u_=
     k.o = function(){  k.a1 = 0.1 }
     k.n_ = function(){ k.a0 = -0.1, k.e0 = {hm:bu} }
     k.c_ = function(){ k.a0 = 0.01, k.e0 = 0, k.set({hm:bd}) }
@@ -9895,7 +9895,7 @@ define('/core/controls',function(require, exports){
 
     // style
     var sb = 'mix(t.deftxt,t.selbg,n.i0)'  // selected base
-    var nb = 't.defbg' // normal base 
+    var nb = 't.defbg' // normal base
     var st = 'sfont( mix(t.deftxt,t.selbg,n.i0), t.seltxt)' // selected text
     var nt = 'sfont(t.defbg, t.deftxt)' // normal text
     b.f = nb
@@ -9918,7 +9918,7 @@ define('/core/controls',function(require, exports){
     b.alias('t', t)
     b.set(g)
 
-    return b 
+    return b
   }
 
   // |  label
@@ -9935,7 +9935,7 @@ define('/core/controls',function(require, exports){
     var t = ui.text()
     t.f = 'sfont(t.defbg, t.deftxt)' // text frag shader
     t.b = ct.f1s // text bitmap
-    t.x = 'ceil(0.5*p.w - 0.5*n.w)' // center      
+    t.x = 'ceil(0.5*p.w - 0.5*n.w)' // center
     t.set(g)
     return t
   }
@@ -9947,7 +9947,7 @@ define('/core/controls',function(require, exports){
     var v = b._v_ = ct.vscroll()
     v._b = b // use front list
     b.l = v.l = 1 // both are layers
-    
+
     // behavior
     cm.list(b)
     cm.select(b)
@@ -9970,7 +9970,7 @@ define('/core/controls',function(require, exports){
 
     return b
   }
-  
+
   // |  edit
   ct.edit = function(g){
     // parts
@@ -9985,7 +9985,7 @@ define('/core/controls',function(require, exports){
     b.l = 1
     c.l = 1
     c._z = 10
-    
+
     c.w = '1'
     c.h = '15'
     c.f = 'mix(white,vec4(1,1,1,0),n.i0)'
@@ -10013,7 +10013,7 @@ define('/core/controls',function(require, exports){
       }
     }
     b.u_ = function(){
-      // hide cursor 
+      // hide cursor
       foc = 0
       m.a0 = 0.05
       s.a0 = 0.05
@@ -10168,7 +10168,7 @@ define('/core/controls',function(require, exports){
     var b = ui.group()
     b.l = 1
     var d = ui.rect()
-    d._b = b 
+    d._b = b
     d.l = 1
     d.w = 5
     b.minw = 50
@@ -10179,7 +10179,7 @@ define('/core/controls',function(require, exports){
     //states
     d.f_
     d.i = function(){ d.a1 = -0.01;ui.cursor('ew-resize') }
-    d.u_= 
+    d.u_=
     d.o = function(){  d.a1 = 0.1;ui.cursor('default')  }
     d.n_ = function(){ d.a0 = 0.1}
     d.c_ = function(){ d.a0 = -0.01 }
@@ -10198,7 +10198,7 @@ define('/core/controls',function(require, exports){
     var b = ui.group()
     b.l = 1
     var d = ui.rect()
-    d._b = b 
+    d._b = b
     d.l = 1
     d.h = 5
     b.minh = 50
@@ -10209,7 +10209,7 @@ define('/core/controls',function(require, exports){
     // states
     d.f_
     d.i = function(){ d.a1 = -0.01;ui.cursor('ns-resize') }
-    d.u_= 
+    d.u_=
     d.o = function(){  d.a1 = 0.1;ui.cursor('default')  }
     d.n_ = function(){ d.a0 = 0.1}
     d.c_ = function(){ d.a0 = -0.01 }
@@ -10228,9 +10228,9 @@ define('/core/controls',function(require, exports){
       n.h = 15
       n.f = ''
         + 'mix(vec4(0,0,0,0),white,'
-        +  'clamp(pow(pow((1-2*len(c-0.5)),1.0)*(pow(sin(c.x*P),88)*ts(2)+pow(sin(c.y*P),88))*0.5+0.8,4)-0.75,0,1)+' 
-        +  '0.7*pow(sin(P*len(vec2(pow(2*(c.x-0.5),2),pow(2*(c.y-0.5),2))) -0.3-0.5*ts(2)),4)' 
-        + ')' 
+        +  'clamp(pow(pow((1-2*len(c-0.5)),1.0)*(pow(sin(c.x*P),88)*ts(2)+pow(sin(c.y*P),88))*0.5+0.8,4)-0.75,0,1)+'
+        +  '0.7*pow(sin(P*len(vec2(pow(2*(c.x-0.5),2),pow(2*(c.y-0.5),2))) -0.3-0.5*ts(2)),4)'
+        + ')'
     })
   }
 
@@ -10247,14 +10247,14 @@ define('/core/controls',function(require, exports){
         +    'clamp(pow(5*len(c-0.5-vec2(0,-.17*pow(ts(1),4))),30*ts(1)),0,1) *'
         +    'clamp(pow(5*len(c-0.5-vec2(0,0)),30*ts(1)),0,1) *'
         +    'clamp(pow(5*len(c-0.5-vec2(-.12*ts(1),0)),30*ts(1)),0,1) *'
-        +    'clamp(pow(5*len(c-0.5-vec2(+.12*ts(1),0)),30*ts(1)),0,1))' 
-        +  ')' 
+        +    'clamp(pow(5*len(c-0.5-vec2(+.12*ts(1),0)),30*ts(1)),0,1))'
+        +  ')'
     })
   }
   // |  horizontal slides with kb nav
   ct.slides = function(g){
     var b = ui.group()
-      
+
     var fnt_big = ui.gl.pfont("55px Monaco")
     var fnt_med = ui.gl.pfont("30px Monaco")
 
@@ -10264,7 +10264,7 @@ define('/core/controls',function(require, exports){
       n.l = 1
       n.b = fnt_big
       n.f = 'mix(black,gray,c.y);'
-      
+
       //| part templates
       n.title = function(t, y){
         var g = fn.named(arguments)
@@ -10331,7 +10331,7 @@ define('/core/themes',function(require, exports){
     selbg:  hexs('9996e2'),
     seltxt: hexs('000000'),
     codeHover: hexs('2E2D52'),
-    codeSelect : hexs('424171'), 
+    codeSelect : hexs('424171'),
     codeMark : hexs('424171'),
 //    codeMark : hexs('035487'),
 //    codeSelect: hexs('033b6e'),
@@ -10352,7 +10352,7 @@ define('/core/themes',function(require, exports){
     codeString: hexs('3ed625'),
     codeOperator: hexs('f59c25'),
     codeComment: hexs('1a89f3'),
-    codeColor1: hexs('ffcccc'), 
+    codeColor1: hexs('ffcccc'),
     codeColor2: hexs('ffe0cc'),
     codeColor3: hexs('fffecc'),
     codeColor4: hexs('c7f5c4'),
@@ -10382,7 +10382,7 @@ define('/core/themes',function(require, exports){
     selbg:  hexs('9996e2'),
     seltxt: hexs('000000'),
     codeHover: hexs('FFF7C2'),
-    codeSelect : hexs('d3e2f4'), 
+    codeSelect : hexs('d3e2f4'),
     codeMark : hexs('FFED75'),
 //    codeMark : hexs('035487'),
 //    codeSelect: hexs('033b6e'),
@@ -10403,7 +10403,7 @@ define('/core/themes',function(require, exports){
     codeString: hexs('006400'),
     codeOperator: hexs('f59c25'),
     codeComment: hexs('0000FF'),
-    codeColor1: hexs('539a2f'), 
+    codeColor1: hexs('539a2f'),
     codeColor2: hexs('9aa633'),
     codeColor3: hexs('ac8935'),
     codeColor4: hexs('ac4d35'),
@@ -10421,7 +10421,7 @@ define('/core/text_mix',function(require, exports){
   var ui = require("./ui")
   var fn = require("./fn")
 
-  // |  textview with zoom/scroll 
+  // |  textview with zoom/scroll
   exports.viewport = function(b){
     // viewport state
     var s = b.vps = {
@@ -10455,7 +10455,7 @@ define('/core/text_mix',function(require, exports){
         if(osy!=s.sy) ui.redraw(b)
         return
       }
-  
+
       s.sx *= z
       s.sy *= z
       s.sp *= z
@@ -10502,16 +10502,16 @@ define('/core/text_mix',function(require, exports){
         if(z<0.9) z = 0.9
         var sy = s.sy
         b.zoom(z)
-        var z = (ui.my - s.o.y) 
-        b.size()  
+        var z = (ui.my - s.o.y)
+        b.size()
         v.ds( z / sy - z / s.sy )
       } else {
         var z = Math.pow(1.05,-ui.mv / 16)
         if(z>1.1) z = 1.1
         var sy = s.sy
         b.zoom(z)
-        var z = (ui.my - s.o.y) 
-        b.size()  
+        var z = (ui.my - s.o.y)
+        b.size()
         v.ds( z / sy - z / s.sy )
       }
     }
@@ -10523,11 +10523,11 @@ define('/core/text_mix',function(require, exports){
       var end = (v.mv >= v.ts - v.pg)
       if(!('h' in s.o))  ui.view(b, s.o)
       // we have pg and ts and mv on a scroll
-      v.pg = s.o.h / s.sy 
+      v.pg = s.o.h / s.sy
       v.ts = b.th //+ 1
       h.pg = s.o.w / s.sx
       h.ts = b.tw + 2
-      var d 
+      var d
       if((d = v.mv - (v.ts - v.pg))>0) v.ds(d)
       else if(v.pg && end) v.ds((v.ts - v.pg) - v.mv) // stick to end
       if((d = h.mv - (h.ts - h.pg))>0) h.ds(d)
@@ -10544,7 +10544,7 @@ define('/core/text_mix',function(require, exports){
         if((d = (y + c) - (-s.y + (s.o.h-s.gy)/s.sy - 1) ) > 0) v.ds(d)
       }
       if(!p || p == 2){
-        // scroll up up 
+        // scroll up up
         if((d = (y - c)- (-s.y ) ) < 0) v.ds(d)
       }
       // scroll right
@@ -10558,13 +10558,13 @@ define('/core/text_mix',function(require, exports){
     }
 
     // text mouse x
-    b.tmx = function(){ 
-      return fn.max(0, Math.round(-s.x + (ui.mx - s.o.x - s.gx) / s.sx)) 
+    b.tmx = function(){
+      return fn.max(0, Math.round(-s.x + (ui.mx - s.o.x - s.gx) / s.sx))
     }
-    
+
     // text mouse y
-    b.tmy = function(){ 
-      return fn.max(0, Math.round(-s.y + (ui.my - s.o.y - s.gy) / s.sy -0.25 )) 
+    b.tmy = function(){
+      return fn.max(0, Math.round(-s.y + (ui.my - s.o.y - s.gy) / s.sy -0.25 ))
     }
   }
 
@@ -10579,7 +10579,7 @@ define('/core/text_mix',function(require, exports){
     }
 
     (function(p){
-    
+
       // add a new cursor to the set
       p.new = function(u, v, x, y){
         var s = this
@@ -10624,13 +10624,13 @@ define('/core/text_mix',function(require, exports){
         while(c){
           var n = c._d
           o.l.rm(c)
-          
+
           var cu = c.u
           var cv = c.v
           var cx = c.x
           var cy = c.y
           // flip em
-          var cf = 0      
+          var cf = 0
           if( (cv - cy || cu - cx ) > 0  ) cu = c.x, cv = c.y, cx = c.u, cy = c.v, cf = 1
           var d = s.l.first()
           while(d){
@@ -10640,7 +10640,7 @@ define('/core/text_mix',function(require, exports){
             var dv = d.v
             var dx = d.x
             var dy = d.y
-            // flip em          
+            // flip em
             if( (dv - dy || du - dx ) > 0  ) du = d.x, dv = d.y, dx = d.u,  dy = d.v
             // check if intersect
             if ( (cy - dv || cx - du) > 0){ // compare > to [
@@ -10655,7 +10655,7 @@ define('/core/text_mix',function(require, exports){
             d = m
           }
           // keep top and bottom for scroll into view
-          if(cv < o.v) o.v = cv, o.cv = c 
+          if(cv < o.v) o.v = cv, o.cv = c
           if(cy > o.y) o.y = cy, o.cy = c
           c.u = cf?cx:cu
           c.v = cf?cy:cv
@@ -10696,7 +10696,7 @@ define('/core/text_mix',function(require, exports){
 
       // forward nav functions to the entire set
       function fwd(n){
-        p[n] = function(){ 
+        p[n] = function(){
           var c = this.l.first()
           while(c){
             c[n].apply(c, arguments)
@@ -10729,7 +10729,7 @@ define('/core/text_mix',function(require, exports){
     b.vcs = curSet() // visible cursor set
     b.dcs = curSet() // drawing cursor set
     b.mcs = curSet() // marking set
-    
+
     // factory a new cursor object
     function cursor(){
       var c
@@ -10759,7 +10759,7 @@ define('/core/text_mix',function(require, exports){
         c.w = c.x = n.x + n.w
         c.update()
       }
-      
+
       // clear selection
       p.clear = function(){
         var c = this
@@ -10781,7 +10781,7 @@ define('/core/text_mix',function(require, exports){
         var c = this
         c.w = c.x = b.tmx()
         c.y = fn.min(b.tmy(), b.th - 1)
-      }    
+      }
 
       p.updatew = function(){
         var c = this
@@ -10799,7 +10799,7 @@ define('/core/text_mix',function(require, exports){
 
       p.left = function(s){
         var c = this
-        var d = (c.v - c.y || c.u - c.x) 
+        var d = (c.v - c.y || c.u - c.x)
         if(d != 0 && !s){
           if(d > 0)  c.u = c.x, c.v = c.y
           else c.x = c.u, c.y = c.v
@@ -10823,13 +10823,13 @@ define('/core/text_mix',function(require, exports){
 
       p.right = function(s){
         var c = this
-        var d = (c.v - c.y || c.u - c.x) 
+        var d = (c.v - c.y || c.u - c.x)
         if(d != 0 && !s){
           if(d < 0) c.u = c.x, c.v = c.y
           else c.x = c.u, c.y = c.v
           c.update()
         } else {
-          c.w = c.x++ 
+          c.w = c.x++
           if(!s) c.u = c.x, c.v = c.y
           c.update()
           if(c.x == c.w){ // end of line
@@ -10909,8 +10909,8 @@ define('/core/text_mix',function(require, exports){
         b.view(c.x, c.y, p)
       }
     })(cursor.prototype)
-    
-    //|  interaction   
+
+    //|  interaction
 
     var tct = fn.dt() // triple click timer
     var tcx = 0 // triple click x
@@ -10937,7 +10937,7 @@ define('/core/text_mix',function(require, exports){
     }
 
     // doubleclick
-    b.u = function(){ 
+    b.u = function(){
       if(!ui.ms.m){ // clear cursors if not holding meta
         b.vcs.clear()
         cmc = b.vcs.new()
@@ -10947,7 +10947,7 @@ define('/core/text_mix',function(require, exports){
       }
       cmc.mouse(b)
       cmc.clear()
-      
+
       if(b.cursorToNode){
         var n = b.cursorToNode(cmc)
         if(n)  cmc.select( n )
@@ -10976,7 +10976,7 @@ define('/core/text_mix',function(require, exports){
         cmc.selectLine()
         return 1
       }
-      
+
       // unless press meta, clear all cursors
       var o, u, v
       if(!ui.ms.m){
@@ -11006,7 +11006,7 @@ define('/core/text_mix',function(require, exports){
     b.lastMarker = 1
     b.m = function(){
       if(ui.cap == b){
-        // check if gridselect 
+        // check if gridselect
         if(gmm){ // gridmode
           b.dcs.grid(gsx, gsy, b.tmx(), b.tmy())
           var c = b.dcs.l.last()
@@ -11105,14 +11105,14 @@ define('/core/text_mix',function(require, exports){
           b.vcs.left(ui.key.s)
           b.vcs.remerge()
           if(b.vcs.cy) b.vcs.cy.view(2)
-        break;      
+        break;
       }
     }
   }
 
   // |  drawing text structures
   exports.drawing = function(b){
-    // depends on vps, ssh, 
+    // depends on vps, ssh,
     b.drawText = function(){
 
       var s = b.sh.text
@@ -11123,7 +11123,7 @@ define('/core/text_mix',function(require, exports){
 
       var t = b.tvc || b.text.first()
       var h = (b.vps.o.h / b.vps.sy)
-      if(t){ 
+      if(t){
         while(t._u && t.y > (-b.vps.y)) t = t._u // scan up
         while(t._d && t.y < (-b.vps.y)-255) t = t._d // scan down
         b.tvc = t
@@ -11141,7 +11141,7 @@ define('/core/text_mix',function(require, exports){
       s.set(ui.uniforms)
       s.sz(b.vps.sx, b.vps.sy, b.vps.ss)
       s.ps(b.vps.x, b.vps.y, b.vps.o.x + b.vps.gx, b.vps.o.y + b.vps.gy)
-      
+
       // draw markers
       var c = b.mcs.l.first()
       while(c){
@@ -11149,14 +11149,14 @@ define('/core/text_mix',function(require, exports){
         else s.fg(ui.t.codeSelect)
         if(c.vb) s.draw(c.vb)
         c = c._d
-      }          
+      }
 
       s.fg(ui.t.codeSelect)
       // visible selection
       var c = b.vcs.l.first()
       while(c){
         //if(c.fg) s.fg(c.fg)
-        //else 
+        //else
         if(c.vb) s.draw(c.vb)
         c = c._d
       }
@@ -11165,7 +11165,7 @@ define('/core/text_mix',function(require, exports){
       var c = b.dcs.l.first()
       while(c){
         //if(c.fg) s.fg(c.fg)
-        //else 
+        //else
         //s.fg(ui.t.codeSelect)
         if(c.vb) s.draw(c.vb)
         c = c._d
@@ -11220,7 +11220,7 @@ define('/core/text_mix',function(require, exports){
       if( b.vps.x != 0){
         b.sh.lrShadow.rect(b.vps.o.x , b.vps.o.y, 5, b.vps.o.h)
       }
-      
+
       // optionally draw a top fade
       if( b.vps.y != 0){
         b.sh.topShadow.rect(b.vps.o.x, b.vps.o.y, b.vps.o.w, 5)
@@ -11235,14 +11235,14 @@ define('/core/text_mix',function(require, exports){
       var u = c.u, v = c.v, x = c.x, y = c.y
       var cf
       if(y <= v) u = c.x, v = c.y, x = c.u, y = c.v//, cf = 1
-    
+
       // allocate enough vertexbuffer
       if(!c.vb || c.vb.$sc < (y-v + 1)){
         c.vb = b.sh.select.alloc( (y-v + 1) * 2, c.vb)
       }
       // set up locals
       var j = 0 // line counter
-      var e = c.vb.e.a // 
+      var e = c.vb.e.a //
       var r = c.vb.r.a
       var s = c.vb.e.s // stride
       var o = 0 // offset
@@ -11256,7 +11256,7 @@ define('/core/text_mix',function(require, exports){
 
       // we should start to find c.v from b.tvc
       var t = b.tvc || b.text.first()
-      if(t){ 
+      if(t){
         while(t._u && (t.y) > v) t = t._u  // scan up
         while(t._d && (t.y+t.l) < v) t = t._d  // scan down
       }
@@ -11270,13 +11270,13 @@ define('/core/text_mix',function(require, exports){
           // loop over text lines
           for(var i = fn.max(0, v - j); i + j <= y && i < l; i++){
                 // set up rect coords
-            var x1 = 0 
+            var x1 = 0
             var y1 = j + i
             var x2 = t.ll[i]
             var y2 = y1 + 1
             // adjust rect
             if(i + j == v) xs = x1 = fn.min(x2, u), /*fl && */t.ld && (c.d = t.ld[i]) // adjust begin at first line
-            if(i + j == y) xe = x2 = fn.min(x2, x),xt = 1, /*!fl && */t.ld && (c.d = t.ld[i]) // adjust end at last line 
+            if(i + j == y) xe = x2 = fn.min(x2, x),xt = 1, /*!fl && */t.ld && (c.d = t.ld[i]) // adjust end at last line
             else x2 += 1 // include newline
             if(v == y && x2 < x1) xs = x2 = x1, x1 = xe, xe = x2  // flip em
 
@@ -11294,7 +11294,7 @@ define('/core/text_mix',function(require, exports){
             e[o] = x1, e[o+1] = y1, o += s
             r[o] = x1, r[o+1] = y1, r[o+2] = x2, r[o+3] = fl,
             e[o] = x2, e[o+1] = y1, o += s
-            r[o] = x1, r[o+1] = y1, r[o+2] = x2, r[o+3] = fl, 
+            r[o] = x1, r[o+1] = y1, r[o+2] = x2, r[o+3] = fl,
             e[o] = x1, e[o+1] = y2, o += s
             r[o] = x1, r[o+1] = y1, r[o+2] = x2, r[o+3] = fl,
             e[o] = x2, e[o+1] = y1, o += s
@@ -11325,10 +11325,10 @@ define('/core/text_mix',function(require, exports){
       // get skip value
       var k = Math.ceil(b.vps.oy / b.vps.sy)
       b.lvb.hy = k * b.vps.sy
-      // round 
+      // round
       var a = Math.floor(t / k)* k  + 1
 
-      // compute y offset 
+      // compute y offset
       b.lvb.ry = -(t - a + 1) * b.vps.sy
 
       // get fraction
@@ -11385,7 +11385,7 @@ define('/core/text_mix',function(require, exports){
 
     // adds textchunks
     b.addChunk = function(t, fg){
-      // get the last buffer 
+      // get the last buffer
       var v = allocNode(t.length)
       // append t to the blk
       var e = v.e.a // element array
@@ -11426,7 +11426,7 @@ define('/core/text_mix',function(require, exports){
         a++
       }
       v.hi += a
-      v.up = 1      
+      v.up = 1
       v.x  = num*stops
       return v
     }
@@ -11472,7 +11472,7 @@ define('/core/text_mix',function(require, exports){
       }
       v.x = x
       v.hi += a
-      v.up = 1      
+      v.up = 1
     }
     b.colors = "$LICARR3"
     // clears all text
@@ -11511,7 +11511,7 @@ define('/trace/trace_db',function(require, exports, module){
 
   function traceDb(o){
     // we store the trace list and databases
-    var db = {sh:{}}  
+    var db = {sh:{}}
 
     // put a textstore on the db object
     tm.storage(db)
@@ -11532,14 +11532,14 @@ define('/trace/trace_db',function(require, exports, module){
     //  r - return message
     //  t - type
     //  s - searchable text
-    //  y - y coordinate 
+    //  y - y coordinate
     //  b000 - block marker
 
     // line object
     //   fid - file ID
     //   ret - function return index (for return)
-    //   x - x coordinate 
-    //   y - y coordinate 
+    //   x - x coordinate
+    //   y - y coordinate
     //   ex - end x
     //   ey - end y
     //   n - function name
@@ -11591,7 +11591,7 @@ define('/trace/trace_db',function(require, exports, module){
       }
 
       // make callstack parents
-      if(!last){ 
+      if(!last){
         if(l.n) last = m
       } else {
         if(m.d > last.d) m.p = last, last = m
@@ -11601,7 +11601,7 @@ define('/trace/trace_db',function(require, exports, module){
             // check if we can be a return from last
             if(l.ret != last.i){
               var l2 = db.lineDict[l.ret]
-              var n2 = db.fileDict[l2.fid].longName 
+              var n2 = db.fileDict[l2.fid].longName
               var l3 = db.lineDict[last.i]
               var n3 = db.fileDict[l3.fid].longName
               fn('invalid return',m.i, n2, l2.n, l2.y, n3, l3.n, l3.y)
@@ -11612,7 +11612,7 @@ define('/trace/trace_db',function(require, exports, module){
           } else {
 
             //var l2 = db.lineDict[l.ret]
-            var n2 = db.fileDict[l.fid].longName 
+            var n2 = db.fileDict[l.fid].longName
 
             var l3 = db.lineDict[last.i]
             var n3 = db.fileDict[l3.fid].longName
@@ -11630,7 +11630,7 @@ define('/trace/trace_db',function(require, exports, module){
       }
       // add our line if  we are a function call
       if(l.n){
-        if(last && last.p){ // store our call on 
+        if(last && last.p){ // store our call on
           if(last.p.cs)  m.nc = last.p.cs
           last.p.cs = m
         }
@@ -11716,11 +11716,11 @@ define('/trace/trace_db',function(require, exports, module){
     db.fmtCall = function(m){
       if(m.x){
         return '\faexception '+(m.v===undefined?'':db.fmt(m.v))
-      } 
+      }
       var l = db.lineDict[m.i]
-      var mod = db.fileDict[l.fid].shortName 
+      var mod = db.fileDict[l.fid].shortName
       var col = db.modColor(mod)
-  
+
       if(l.ret){ // function return
         var f = db.lineDict[l.ret]
         return '\fareturn '+(m.v===undefined?'':db.fmt(m.v))
@@ -11790,7 +11790,7 @@ define('/core/text_shaders',function(require, exports){
     a: {
       e:'vec2', //x:text coord x, y:text coord y
       r:'vec4'  //x:left text coord, y:top text coord, z:right text coord, w:flag 1 tl, 2 bl, 4 tr, 8 br
-    }, 
+    },
     v: 'vec4((floor(ps.z + (e.x+ps.x)*sz.x+l.x)/s.x)*2.-1., 1.-(floor(ps.w + (e.y+ps.y)*sz.y-sz.z+l.y)/s.y)*2.,0,1.)',
     f: function(){
       vec3_v(floor(ps.z + (ps.x + r.x)* sz.x),floor(ps.w + (ps.y + r.y )* sz.y - sz.z), ps.z + (ps.x + r.z) * sz.x)
@@ -11823,13 +11823,13 @@ define('/trace/code_db',function(require){
   var tm = require("../core/text_mix")
   var ts = require("../core/text_shaders")
   var gl = ui.gl
-  
+
   //  Styling
   var ft1 = ui.gl.sfont(
     navigator.platform.match(/Mac/)?
     "12px Menlo":
     "12px Lucida Console")
-  
+
   function codeDb(g){
 
     var db = {sh:{}}
@@ -11889,7 +11889,7 @@ define('/trace/code_db',function(require){
     var tabWidth = 3
 
     db.fetch = function(name, cb){
-      // if we dont have name, 
+      // if we dont have name,
     }
 
     db.parse = function(name, src){
@@ -11927,7 +11927,7 @@ define('/trace/code_db',function(require){
           }
         }
         addWhitespace(f, n.w)
-        
+
       })
       //b.size()
       return f
@@ -11945,15 +11945,15 @@ define('/trace/list_view',function(require, exports, module){
   var ts = require("../core/text_shaders")
   var gl = ui.gl
 
-  //Styling   
+  //Styling
   var font1 = ui.gl.sfont(
     navigator.platform.match(/Mac/)?
     "12px Menlo":
     "12px Lucida Console")
-  
+
   function listView(g){
     var b = ui.rect({f:'t.codeBg'})
-    
+
     b._v_ = ct.vScrollHider({h:'p.h - 10'})
     b._h_ = ct.hScrollHider({w:'p.w - 10'})
 
@@ -12015,14 +12015,14 @@ define('/trace/list_view',function(require, exports, module){
         // alright so we have a cursor selection,
         // lets fetch the data stored at our first cursor
         var c = b.dcs.l.first() || b.vcs.l.first()
-        //fn(c!=null, c.d!=null, last!=c.d, b.db.selectTrace !=0)  
+        //fn(c!=null, c.d!=null, last!=c.d, b.db.selectTrace !=0)
         if(c && c.d && last != c.d && b.db.selectTrace) b.db.selectTrace(last = c.d)
         b.view(x, y, 0, 1)
         if(b.cursorMove)b.cursorMove()
       }
     }
 
-    // if we 
+    // if we
     b.o = function(){
       // set the view back to our head cursor
       if(b.linked){
@@ -12073,7 +12073,7 @@ define('/trace/list_view',function(require, exports, module){
         c = c._d
       }
       b.drawText()
-      
+
       //ui.clip(b.vps.o.x, b.vps.o.y, b.vps.o.w, b.vps.o.h )
       b.drawShadows()
     }
@@ -12105,18 +12105,18 @@ define('/trace/code_view',function(require){
   var tm = require("../core/text_mix")
   var ts = require("../core/text_shaders")
   var gl = ui.gl
-  
+
   // Styling
   var ft1 = ui.gl.sfont(
     navigator.platform.match(/Mac/)?
     "12px Menlo":
     "12px Lucida Console")
-  
+
   function codeView(g){
 
     // background
     var b = ui.rect({f:'t.codeBg'})
-    
+
     // scrollbars
     b._v_ = ct.vScroll({h:'p.h - 10'})
     b._h_ = ct.hScroll({w:'p.w - 10'})
@@ -12124,7 +12124,7 @@ define('/trace/code_view',function(require){
     b.set(g)
     b.font = ft1
 
-    //|  rendering   
+    //|  rendering
 
     // shaders+-
     b.sh = {
@@ -12182,13 +12182,13 @@ define('/trace/hover_text',function(require){
   var tm = require("../core/text_mix")
   var ts = require("../core/text_shaders")
   var gl = ui.gl
-  
+
   // Styling
   var ft1 = ui.gl.sfont(
     navigator.platform.match(/Mac/)?
     "12px Menlo":
     "12px Lucida Console")
-  
+
   hoverText.ft = ft1
   function hoverText(g){
     "no tracegl"
@@ -12197,7 +12197,7 @@ define('/trace/hover_text',function(require){
     b.shape = function(vec2_v){
       return_float(len(vec2(pow(abs(v.x),n.w/5),pow(abs(v.y),n.h/5))))
     }
-    
+
     // scrollbars
     //b._v_ = ct.vScroll({h:'p.h - 10'})
     //b._h_ = ct.hScroll({w:'p.w - 10'})
@@ -12205,7 +12205,7 @@ define('/trace/hover_text',function(require){
     b.set(g)
     b.font = ft1
 
-    //|  rendering   
+    //|  rendering
 
     // shaders+-
 
@@ -12291,19 +12291,19 @@ define('/trace/code_bubble',function(require){
   var tm = require("../core/text_mix")
   var ts = require("../core/text_shaders")
   var gl = ui.gl
-  
+
   // Styling
   var ft1 = ui.gl.sfont(
     navigator.platform.match(/Mac/)?
     "12px Menlo":
     "12px Lucida Console")
-  
+
   function codeBubble(g){
 
     // background rect
     var bg = ui.group({l:1})
     bg.set(g)
-    // bubble border 
+    // bubble border
     var border = ct.innerShadow({
       radius: 10,
       stepa:1.05,
@@ -12312,7 +12312,7 @@ define('/trace/code_bubble',function(require){
       outer:'alpha(t.codeBg,0)'
     })
     border._p = bg
-    // title area 
+    // title area
     var title = ui.rect({sel:0,f:'mix(t.codeHover,t.codeMark,n.sel)', y:10, h:30, x:10, w:'p.w - 20'})
     title._p = bg
     //title._p = bg
@@ -12332,7 +12332,7 @@ define('/trace/code_bubble',function(require){
 
     title.font = ft1
     body.font = ft1
-    //|  rendering   
+    //|  rendering
 
     // shaders+-
     body.sh = title.sh = {
@@ -12355,12 +12355,12 @@ define('/trace/code_bubble',function(require){
     tm.cursors(title)
     tm.drawing(title)
     tm.storage(title)
-    
+
     title.vps.gy = 5
     title.vps.gx = 2
     body.vps.gx = 2
 
-    // unhook scrollwheel 
+    // unhook scrollwheel
     title.s = null
     body.s = null
     // forward scrollbar scroll message
@@ -12368,7 +12368,7 @@ define('/trace/code_bubble',function(require){
     title._v_.s = body._v_.s = bg._p.s
 
     //bg.titleBuf = body.sh.text.alloc(1024)
-    
+
     title.l = function(){
       ui.view(title, title.vps.o)
       title.drawSelection()
@@ -12401,10 +12401,10 @@ define('/trace/code_bubble',function(require){
       //ui.clip(body.vps.o.x, body.vps.o.y, body.vps.o.w, body.vps.o.h)
       //body.drawShadows()
     }
-    
+
     // doubleclick
     body.u = function(){
-      // dump file/line 
+      // dump file/line
       var c = body.vcs.l.first()
       if(c && bg.clickLine)
         bg.clickLine(body.file.file, c.y)
@@ -12437,7 +12437,7 @@ define('/trace/code_bubble',function(require){
         var e = i < l.a.length - 1
         v.addFormat( '   \ft'+l.a[i] + '\fa = ' + tdb.fmt(m.a[i], 255) + (e?",":""), tdb.colors )
         v.endLine()
-      } 
+      }
       if(m.r && m.r.v !== '_$_undefined' && m.r.v !== undefined){
         v.addFormat((l.a.length?")":"")+' '+tdb.fmtCall(m.r), tdb.colors)
         v.endLine()
@@ -12520,7 +12520,7 @@ define('/trace/code_bubble',function(require){
           c.jmp = c.lst = null
           c.type = 'exception'
           c.value = r[k]
-        }        
+        }
       }
 
       // lets mark the main function args
@@ -12553,7 +12553,7 @@ define('/trace/code_bubble',function(require){
           c.lst = null
           c.fg = ui.t.codeSelf
         }
-      }  
+      }
 
       var maxlst = 100
 
@@ -12561,10 +12561,10 @@ define('/trace/code_bubble',function(require){
       // lets mark function calls
       var fc = m.cs
       while(fc){
-        // check if we are re-marking a callsite, ifso 
+        // check if we are re-marking a callsite, ifso
         // store more calls on our marker
         if(fc.r){
-          // translate the call site line 
+          // translate the call site line
           var l = tdb.lineDict[fc.r.c]
           if(l){
             // add to existing callsite
@@ -12581,7 +12581,7 @@ define('/trace/code_bubble',function(require){
             if(bg.prev && bg.prev.msg == fc){
               c.fg = ui.t.codeSelf
             }
-          
+
             // lets mark all function arguments
             c.lst.unshift({
               type:'returns',
@@ -12619,7 +12619,7 @@ define('/trace/code_bubble',function(require){
                       } else { // its an apply
                         //if(c.lst.length) c.lst = []
                         //for(var j = 0;j < fc.a.length;j++)
-                        if(c.lst.length<maxlst) 
+                        if(c.lst.length<maxlst)
                         c.lst.push({
                           type:null,//(fl.a[j] ? fl.a[j].n : '?') +' =',
                           value:fc,//fc.a?fc.a[j]:null
@@ -12679,7 +12679,7 @@ define('/trace/code_bubble',function(require){
       var v = bg._p._p._p._p.hoverView
       v.hide()
     }
-    
+
     var lx, ly, lc
 
     var oldr = body.r
@@ -12714,13 +12714,13 @@ define('/trace/code_bubble',function(require){
       lx = ui.mx, ly = ui.my, lc = m
 
       var tdb = body.tdb
-      
+
       // when we get a function call, or 'null' we show the hoverview
       var v = bg._p._p._p._p.hoverView
       if(!m){ // no hover
         v.hide()
         return
-      } 
+      }
       else {
         v.clearText()
         if(m.lst){
@@ -12755,7 +12755,7 @@ define('/trace/code_bubble',function(require){
 define('/trace/trace_client',function(require){
   define.settings = define.settings || {}
   document.title = "traceGL"
-  
+
   var fn = require("../core/fn")
   var ui = require("../core/ui")
   if(!ui.gl) return
@@ -12763,7 +12763,7 @@ define('/trace/trace_client',function(require){
   var ct = require("../core/controls")
 
   var themes = require("../core/themes")
-  
+
   var theme_type = define.settings.theme || 'dark'
   ui.theme(themes[define.settings.theme] || themes.dark)// set theme
 
@@ -12808,7 +12808,7 @@ define('/trace/trace_client',function(require){
     var sdb = traceDb(tdb)
     var cdb = codeDb()
 
-    var paused 
+    var paused
     var paused_m
 
     // io channel data function
@@ -12830,7 +12830,7 @@ define('/trace/trace_client',function(require){
         if(!paused && paused_m)  if(m.d == 1) paused_m = paused
 
         if(paused_m) return
-  
+
         if(tdb.processTrace(m) && searchBox.t.length && !searcher && matchSearch(m)){
           sdb.addTrace(m)
           sdb.changed()
@@ -12842,7 +12842,7 @@ define('/trace/trace_client',function(require){
 
     function clearTraces(){
       // clear the traceDb, searchDb
-      // clear the bubbles and the 
+      // clear the bubbles and the
       tdb.clearText()
       sdb.clearText()
       tdb.msgIds = {}
@@ -12953,7 +12953,7 @@ define('/trace/trace_client',function(require){
         b.x = 0
         b.y = y
 
-        // select text in bubble 
+        // select text in bubble
         var file = cdb.files[f.longName]
         var line = l.y
 
@@ -13016,12 +13016,12 @@ define('/trace/trace_client',function(require){
           try{
             regexp = new RegExp(s.slice(1),"ig")
           } catch(e){
-            regexp = 0        
+            regexp = 0
           }
         } else regexp = 0
         pattern = s
       }
-      if(!regexp)  return m.s.indexOf( pattern ) != -1  
+      if(!regexp)  return m.s.indexOf( pattern ) != -1
       else return m.s.match( regexp ) != null
     }
 
@@ -13106,7 +13106,7 @@ define('/trace/trace_client',function(require){
 
             // restart the nodejs app under testing and clears traces
           }
-        })      
+        })
         ct.button({
           y:2,
           x:248,
@@ -13116,7 +13116,7 @@ define('/trace/trace_client',function(require){
             searchBox.t = ""
             doSearch()
           }
-        })    
+        })
         searchBox = ct.edit({
           empty:'search filter',
           y:2,
@@ -13148,7 +13148,7 @@ define('/trace/trace_client',function(require){
             sbigView.vps.gx = 7
           })
           searchGroup.hide()
-        })          
+        })
 
         ct.hSplit(function(n){
           stackView = listView({w:267})
