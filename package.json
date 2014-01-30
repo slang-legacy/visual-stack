@@ -1,0 +1,19 @@
+{
+  "name": "visual-stack",
+  "version": "0.0.0",
+  "description": "Visualize JavaScript codeflow",
+  "main": "lib",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/slang800/visual-stack.git"
+  },
+  "author": "Sean Lang <slang800@gmail.com>",
+  "license": "GPLv3",
+  "bugs": {
+    "url": "https://github.com/slang800/visual-stack/issues"
+  },
+  "homepage": "https://github.com/slang800/visual-stack"
+}
