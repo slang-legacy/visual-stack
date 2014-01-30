@@ -61,6 +61,7 @@ define('/trace/trace_server',function(require){
 			}) + "\033[0m";
 			process.stderr.write(v[i]);
 		}
+		process.stderr.write('\n');
 	}
 
 
@@ -106,10 +107,10 @@ define('/trace/trace_server',function(require){
 		return f
 	}
 
-	out('~~[trace.GL] ~bc~See~w~ your code. This product has a commercial license.\n')
+	out('~~[trace.GL] ~bc~See~w~ your code.');
 
 	function loadSettings(file){
-		if(!fs.existsSync(file)) return
+		if(!fs.existsSync(file)) return;
 		try{
 			var data = fs.readFileSync(file).toString().replace(/\/\*[\s|S]?\*\//g,'').replace(/\/\/.*?\n/g,'')
 			define.settings = JSON.parse(data)
@@ -136,26 +137,27 @@ define('/trace/trace_server',function(require){
 		var fspec = {_no:[], _do:[], _opt:{}}
 
 		function usage(err){
-			out('~br~'+err+'\n')
-			out('~w~Usage:\n')
-			out('~w~node tracegl ~c~[flag] ~g~target ~y~[args]\n')
-			out('  ~g~../path/to/wwwroot ~w~Trace browser js via static fileserver\n')
-			out('  ~g~http://proxytarget:port ~w~Trace browser js via proxy\n')
-			out('  ~g~nodefile.js ~y~[args] ~w~Trace Node.js process\n')
-			out('  ~g~trace.gz ~w~Play back trace.gz file\n')
-			out('  ~c~-gz[:trace.gz] ~w~Record trace to gzip file. No trace UI started\n')
-			out('  ~c~-do[/:]match ~w~Only trace filenames containing match. Filters -do set first, then -no\n')
-			out('  ~c~-no[/:]match ~w~Ignore filenames containing match. Replace : with / for a regexp, use double escaped \\\\ \n')
-			out('  ~c~-nolib ~w~Short for -no/jquery.* -no:require.js -no/node\\\\_modules \n')
-			out('  ~c~-noup ~w~Don\'t update traceGL automatically\n')
-			out('  ~c~-nocatch ~w~Don\'t create exception catching\n')
-			out('  ~c~-bind:0.0.0.0 ~w~Set the hostname to bind our external ports to, default 0.0.0.0\n')
-			out('  ~c~-ui:port ~w~Set trace UI port. default: 2000\n')
-			out('  ~c~-tgt:port ~w~Set browser JS port. default: 2080\n')
-			out('~w~node tracegl.js ~r~[commmand]\n')
-			out('  ~r~-settings ~w~write a .tracegl settings template in the current dir\n')
-			out('  ~r~-update ~w~do an explicit update of traceGL (normally in background)\n')
-			return
+			out(
+				'~br~'+err+'\n' +
+				'~w~Usage:\n' +
+				'~w~node tracegl ~c~[flag] ~g~target ~y~[args]\n' +
+				'  ~g~../path/to/wwwroot ~w~Trace browser js via static fileserver\n' +
+				'  ~g~http://proxytarget:port ~w~Trace browser js via proxy\n' +
+				'  ~g~nodefile.js ~y~[args] ~w~Trace Node.js process\n' +
+				'  ~g~trace.gz ~w~Play back trace.gz file\n' +
+				'  ~c~-gz[:trace.gz] ~w~Record trace to gzip file. No trace UI started\n' +
+				'  ~c~-do[/:]match ~w~Only trace filenames containing match. Filters -do set first, then -no\n' +
+				'  ~c~-no[/:]match ~w~Ignore filenames containing match. Replace : with / for a regexp, use double escaped \\\\ \n' +
+				'  ~c~-nolib ~w~Short for -no/jquery.* -no:require.js -no/node\\\\_modules \n' +
+				'  ~c~-noup ~w~Don\'t update traceGL automatically\n' +
+				'  ~c~-nocatch ~w~Don\'t create exception catching\n' +
+				'  ~c~-bind:0.0.0.0 ~w~Set the hostname to bind our external ports to, default 0.0.0.0\n' +
+				'  ~c~-ui:port ~w~Set trace UI port. default: 2000\n' +
+				'  ~c~-tgt:port ~w~Set browser JS port. default: 2080\n' +
+				'~w~node tracegl.js ~r~[commmand]\n' +
+				'  ~r~-settings ~w~write a .tracegl settings template in the current dir\n' +
+				'  ~r~-update ~w~do an explicit update of traceGL (normally in background)'
+			)
 		}
 		var noup
 		// process arguments
@@ -194,10 +196,10 @@ define('/trace/trace_server',function(require){
 					fspec._do.push(a.slice(3))
 				} else if(a.indexOf('-settings') == 0){
 					if(fs.existsSync('tracegl.json')){
-						return out('~r~ERROR: ~~ .tracegl file already exists, remove before creating a new template\n')
+						return out('~r~ERROR: ~~ .tracegl file already exists, remove before creating a new template')
 					}
 					fs.writeFileSync("tracegl.json", define.settingsData)
-					return out('~g~OK: ~~ tracegl.jsonl file written in current directory, open it in an editor to modify settings\n')
+					return out('~g~OK: ~~ tracegl.jsonl file written in current directory, open it in an editor to modify settings')
 				}else if(a.indexOf('-bind')== 0){
 					bind = a.slice(6)
 				} else return usage("Invalid argument "+a)
@@ -325,7 +327,7 @@ define('/trace/trace_server',function(require){
 			ui.packaged = 1
 		ui.favicon = "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"
 		ui.listen(port, bind)
-		out("~~[trace.GL]~w~ WebGL trace UI: http://"+bind+":"+port+"\n")
+		out("~~[trace.GL]~w~ WebGL trace UI: http://"+bind+":"+port)
 
 		var dict = []
 		var queue = []
@@ -449,7 +451,7 @@ define('/trace/trace_server',function(require){
 		tgt.root = root
 		tgt.listen(port, bind)
 		//appHttp.watcher = define.watcher()
-		out("~~[trace.GL]~w~ Serving browser JS: http://"+bind+":"+port+"\n")
+		out("~~[trace.GL]~w~ Serving browser JS: http://"+bind+":"+port)
 
 		// incoming message, forward to sender
 		tgt.data = function(m, c){
@@ -535,7 +537,7 @@ define('/trace/trace_server',function(require){
 		tgt.listen(port, "0.0.0.0")
 
 		//appHttp.watcher = define.watcher()
-		out("~~[trace.GL]~w~ Proxying browser JS: http://"+bind+":"+port+" -> "+proxy+"\n")
+		out("~~[trace.GL]~w~ Proxying browser JS: http://"+bind+":"+port+" -> "+proxy)
 
 		// incoming message, forward to sender
 		tgt.data = function(m, c){
@@ -9649,7 +9651,12 @@ define('/core/controls',function(require, exports){
 		var inout 
 		// states
 		b.i = 
-		k.i = function(){ b.a1 = k.a1 = -0.01; inout = 1; if(hider)clearTimeout(hider), hider = 0 }
+		k.i = function(){
+			b.a1 = k.a1 = -0.01;
+			inout = 1;
+			if(hider) clearTimeout(hider), hider = 0;
+		}
+		
 		b.o = 
 		k.o = function(){	
 			if(hider) clearTimeout(hider)
