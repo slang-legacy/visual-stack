@@ -7,15 +7,15 @@ define('/trace/trace_server',function(require){
     return
   }
 
-  var path = require('path')
-  var fs = require('fs')
-  var url = require('url')
-  var zlib = require('zlib')
-  var http = require('http')
-  var https = require('https')
-  var crypto = require('crypto')
-  var instrument = require('./instrument')
-  var childproc = require('child_process')
+  var path = require('path');
+  var fs = require('fs');
+  var url = require('url');
+  var zlib = require('zlib');
+  var http = require('http');
+  var https = require('https');
+  var crypto = require('crypto');
+  var instrument = require('./instrument');
+  var childproc = require('child_process');
 
   // the nodejs loader
   if(process.argv[2] && process.argv[2].indexOf('-l')==0) return nodeLoader()
@@ -146,14 +146,12 @@ define('/trace/trace_server',function(require){
         '  ~c~-do[/:]match ~w~Only trace filenames containing match. Filters -do set first, then -no\n' +
         '  ~c~-no[/:]match ~w~Ignore filenames containing match. Replace : with / for a regexp, use double escaped \\\\ \n' +
         '  ~c~-nolib ~w~Short for -no/jquery.* -no:require.js -no/node\\\\_modules \n' +
-        '  ~c~-noup ~w~Don\'t update traceGL automatically\n' +
         '  ~c~-nocatch ~w~Don\'t create exception catching\n' +
         '  ~c~-bind:0.0.0.0 ~w~Set the hostname to bind our external ports to, default 0.0.0.0\n' +
         '  ~c~-ui:port ~w~Set trace UI port. default: 2000\n' +
         '  ~c~-tgt:port ~w~Set browser JS port. default: 2080\n' +
         '~w~node tracegl.js ~r~[commmand]\n' +
-        '  ~r~-settings ~w~write a .tracegl settings template in the current dir\n' +
-        '  ~r~-update ~w~do an explicit update of traceGL (normally in background)'
+        '  ~r~-settings ~w~write a .tracegl settings template in the current dir'
       )
     }
     var noup
@@ -692,7 +690,7 @@ define('/core/fn',function(){
 
   fn.named    = named
 
-  // |  named arguments
+  // named arguments
   function named(a, f){
     var t = typeof a[0]
     if(t == 'function' || t== 'object') return t
@@ -705,7 +703,7 @@ define('/core/fn',function(){
     for(var i = 0, j = a.length;i<j;i++) g[n[i]] = a[i]
     return g
   }
-  // |  left right linked list
+  // left right linked list
   function list(l, r){
 //    var u // unique id/
 //    var f // free slot
@@ -864,7 +862,7 @@ define('/core/fn',function(){
     return li
   }
 
-  // |  apply event pattern to object
+  // apply event pattern to object
   function events(o){
 
     o.on = function(e, f){
@@ -912,7 +910,7 @@ define('/core/fn',function(){
     }
   }
 
-  // |  simple fixed integer stack
+  // simple fixed integer stack
   function stack(){
     function st(){
       return st.fn.apply(null, arguments)
@@ -1052,7 +1050,7 @@ define('/core/fn',function(){
     return s.toLowerCase()
   }
 
-  // |  pubsub for all your event needs
+  // pubsub for all your event needs
   function ps(il, ir){
 
     var li = list(il || '_psl', ir || '_psr')
@@ -1064,8 +1062,8 @@ define('/core/fn',function(){
     return li
   }
 
-  // |  mersenne twister
-  // |  Inspired by http://homepage2.nifty.com/magicant/sjavascript/mt.js
+  // mersenne twister
+  // Inspired by http://homepage2.nifty.com/magicant/sjavascript/mt.js
   function mt(s, h){ // seed, itemarray or hash
     if (s === undefined) s = new Date().getTime();
     var p, t
@@ -1117,8 +1115,8 @@ define('/core/fn',function(){
     return nx
   }
 
-  // |  sha1
-  // |  Inspired by http://www.webtoolkit.info/javascript-sha1.html
+  // sha1
+  // Inspired by http://www.webtoolkit.info/javascript-sha1.html
   function sha1hex (m) {
     function rl(n,s){ return ( n<<s ) | (n>>>(32-s)) }
     function lsb(v) {
@@ -1186,7 +1184,7 @@ define('/core/fn',function(){
     return (hex(v) + hex(w) + hex(x) + hex(y) + hex(z)).toLowerCase()
   }
 
-  // |  wait for t milliseconds
+  // wait for t milliseconds
   function wait(t){
     var p = ps()
     p.empty = function(){
@@ -1196,7 +1194,7 @@ define('/core/fn',function(){
     return p;
   }
 
-  // |  repeat with an interval of t milliseconds
+  // repeat with an interval of t milliseconds
   function repeat(t){
     var p = ps()
     p.empty = function(){
@@ -1206,29 +1204,29 @@ define('/core/fn',function(){
     return p;
   }
 
-  // |  next larger power of 2
+  // next larger power of 2
   function nextpow2(x) {
       --x
       for (var i = 1; i < 32; i <<= 1)  x = x | x >> i
       return x + 1
   }
 
-  // |  clamp things
+  // clamp things
   function clamp(a, mi, ma){
     return a<mi?mi:a>ma?ma:a
   }
 
-  // |  min
+  // min
   function min(a, b){
     return a<b?a:b
   }
 
-  // |  max
+  // max
   function max(a, b){
     return a>b?a:b
   }
 
-  // |  delta time helper
+  // delta time helper
   function dt(){
     var ci
     if (typeof chrome !== "undefined" && typeof chrome.Interval === "function")
@@ -1254,12 +1252,12 @@ define('/core/fn',function(){
     return dt;
   }
 
-  // |  quick stacktrace
+  // quick stacktrace
   function tr(){
     console.log(new Error().stack)
   }
 
-  // |  node walker
+  // node walker
   function walk(n, sn, f){
     var s = typeof f != 'function' && f
     var z = 0
@@ -1276,7 +1274,7 @@ define('/core/fn',function(){
     }
   }
 
-  // |  dump objects to string
+  // dump objects to string
   function dump(
     d, // dump object
     o, // options {m:99 max depth,  p:0 pack, c:0  capacity, n:1 no recursion }*/,
@@ -4966,7 +4964,7 @@ define('/core/gl_browser',function(require, exports, module){
     return true
   }
 
-  // |  font load watcher. go browsers! Safari still manages to break this
+  // font load watcher. go browsers! Safari still manages to break this
   function fwatch(ft, cb){
 
     var c = document.createElement('canvas')
@@ -5002,7 +5000,7 @@ define('/core/gl_browser',function(require, exports, module){
       }
     }, 100)
   }
-  // |  font and image loader
+  // font and image loader
   gl.load = function(){
     var n = 0
     var f = arguments[arguments.length - 1]
@@ -5037,7 +5035,7 @@ define('/core/gl_browser',function(require, exports, module){
     if(arguments.length == 1) f()
   }
 
-  // |  texture from image
+  // texture from image
   gl.texture = function(i, t, s) {
     if(!t ) t = gl.createTexture()
     gl.bindTexture(gl.TEXTURE_2D, t)
@@ -5075,7 +5073,7 @@ define('/core/gl_browser',function(require, exports, module){
     return t
   }
 
-  // |  create a camera feed
+  // create a camera feed
   gl.camera = function(cb) {
     var o = document.createElement('video');
     o.autoplay = 'autoplay';
@@ -5091,7 +5089,7 @@ define('/core/gl_browser',function(require, exports, module){
     )
   }
 
-  // |  texture load queue
+  // texture load queue
   gl.loadImage = function(u, cb){
     var t = gl.createTexture()
     if(img[u]){
@@ -5106,7 +5104,7 @@ define('/core/gl_browser',function(require, exports, module){
 
   var sFontSh
   var pFontSh
-  // |  Create a pixel font texture
+  // Create a pixel font texture
 
   gl.pfont = function(f){ // font
     "no tracegl"
@@ -5142,7 +5140,7 @@ define('/core/gl_browser',function(require, exports, module){
     return t2
   }
 
-  // |  Create a subpixel font texture
+  // Create a subpixel font texture
   gl.sfont = function(f){ // font
     "no tracegl"
     var t
@@ -5181,7 +5179,7 @@ define('/core/gl_browser',function(require, exports, module){
     return t2
   }
 
-  // |  create updateable canvas texture
+  // create updateable canvas texture
   /*
   gl.canvas = function(w, h){ // font
     var c = document.createElement( "canvas" )
@@ -5232,7 +5230,7 @@ define('/core/gl_browser',function(require, exports, module){
     return t
   }
 
-  // |  Create a font texture
+  // Create a font texture
   function font(f){ // font
     var c = document.createElement( "canvas" )
     var x = c.getContext( "2d" )
@@ -5525,7 +5523,7 @@ define('/core/gl',function(require, exports, module){
 
   var illegal_attr = {hi:1,lo:1,i:1,up:1}
 
-  // |  shader function id-ifyer for fast caching
+  // shader function id-ifyer for fast caching
   var fnid_c = 1 // the function id counter
   var fnid_o = {} // id to function string lookup
   var fnid_tc = {} // tracecache, used for fast shader hashing
@@ -6099,7 +6097,7 @@ define('/core/gl',function(require, exports, module){
     }
   }
 
-  // |  evaluate a float shader expression in js
+  // evaluate a float shader expression in js
   // JS version of the expression compiler
   function js_expr(f, a, un, el, rd){ // function, args
     if(!f) return a[0]
@@ -6547,7 +6545,7 @@ define('/core/gl',function(require, exports, module){
 
   gl.flip_y = detect_y()
 
-  // |  parse string colors
+  // parse string colors
   function parseColor(s) {
     var c
     if(!s.indexOf("vec4")) {
@@ -7187,7 +7185,7 @@ define('/core/ui_draw',function(require, exports, module){
 
   module.exports = function(ui){
 
-    // |  group
+    // group
     function group(g){
       var n = new ui.Node()
       n._t = group
@@ -7198,7 +7196,7 @@ define('/core/ui_draw',function(require, exports, module){
     }
     ui.group = group
 
-    // |  rectangle
+    // rectangle
 
     function rect(g){
       var n = new ui.Node()
@@ -7262,7 +7260,7 @@ define('/core/ui_draw',function(require, exports, module){
     }
     ui.rect = rect
 
-    // |  text
+    // text
     function text(g){
 
       var n = new ui.Node()
@@ -7394,7 +7392,7 @@ define('/core/ui_draw',function(require, exports, module){
     }
     ui.text = text
 
-    // |  edge
+    // edge
     function edge(g){
       var n = new ui.Node()
       n._t = edge
@@ -7497,7 +7495,7 @@ define('/core/ui',function(require){
 
   function ui(){}
 
-  // |  DOM node API
+  // DOM node API
   var ex = {
 
     // coordinates
@@ -7655,7 +7653,7 @@ define('/core/ui',function(require){
     t : ''
   }
 
-  // |  the DOM node
+  // the DOM node
   var node_vs = {};
   function Node(){
     this._p = ui.p
@@ -7841,7 +7839,7 @@ define('/core/ui',function(require){
     gl.palette(o, theme)
   }
 
-  // |  baseclass for UI shader definitions
+  // baseclass for UI shader definitions
   ui.shader = function(p){
     var d = {
       e: el,
@@ -7885,7 +7883,7 @@ define('/core/ui',function(require){
     return d
   }
 
-  // |  nodelists
+  // nodelists
   var l_i = fn.list('_3','_4')
   var l_t = fn.list('_5','_6') // permanent anims
 
@@ -8107,7 +8105,7 @@ define('/core/ui',function(require){
     }
   }
 
-  // |  free layer render structs
+  // free layer render structs
   function freelayer(n){
 
     var q  = n._q
@@ -8123,7 +8121,7 @@ define('/core/ui',function(require){
     p._0.rm(n)
   }
 
-  // |  free non layer node render data
+  // free non layer node render data
   function freenode(n){
 
     var v = n._v
@@ -8154,7 +8152,7 @@ define('/core/ui',function(require){
     delete n._k
   }
 
-  // |  unhook node, leave all refs node->tree
+  // unhook node, leave all refs node->tree
   function unhook(n){
     var p = n._p
     if(!p){
@@ -8168,7 +8166,7 @@ define('/core/ui',function(require){
     if(n._d) n._d._u = n._u
   }
 
-  // |  remove (destroy) a dom node
+  // remove (destroy) a dom node
   ui.rm = function(n){
     // remove childnode
     unhook(n)
@@ -8217,7 +8215,7 @@ define('/core/ui',function(require){
     //delete n._b
   }
 
-  // |  count relative
+  // count relative
   ui.count = function(n, c){
     if(c>0){
       while(c && n._d) n = n._d, c--
@@ -8227,12 +8225,12 @@ define('/core/ui',function(require){
     return n
   }
 
-  // |  first item
+  // first item
   ui.first = function(n){
     return n._p._c
   }
 
-  // |  last item
+  // last item
   ui.last = function(n){
     while(n._d) n = n._d
     return n
@@ -8252,21 +8250,21 @@ define('/core/ui',function(require){
   ui.modal = fn.stack()
    ui.modal.push(root)
 
-  // |  ask modal control
+  // ask modal control
    ui.pushmodal = function(n){
      ui.modal.top()._m = 0
      ui.modal.push(n)
      n._m = 1
    }
 
-  // |  release last modal
+  // release last modal
    ui.popmodal = function(){
      var n = ui.modal.pop()
      n._m = 0
      ui.modal.top()._m = 1
    }
 
-  // |  keyboard focus
+  // keyboard focus
   ui.focus = function(n){
     if(ui.foc == n) return
     if(ui.foc && ui.foc.u_) ui.foc.u_(n)
@@ -8274,7 +8272,7 @@ define('/core/ui',function(require){
     ui.foc = n
   }
 
-  // |  focus next item
+  // focus next item
   ui.focus_next = function(){
     var n = ui.foc._d
     while(n){
@@ -8288,7 +8286,7 @@ define('/core/ui',function(require){
     }
   }
 
-  // |  focus previous item
+  // focus previous item
   ui.focus_prev = function(){
     var n = ui.foc._u
     while(n){
@@ -8322,7 +8320,7 @@ define('/core/ui',function(require){
     }
   })
 
-  // |  event bubble
+  // event bubble
   ui.bubble = function(n, e){
     //check if there is a modal flag in the parent chain
     var p = n
@@ -8345,7 +8343,7 @@ define('/core/ui',function(require){
   }
   ui.cursor = gl.cursor
 
-  // |  view computation
+  // view computation
   ui.view = function(n, v){ // node, left top bottom right
     v = v || {}
     v.x = gl.eval(n, n._x, uni, el),
@@ -8354,7 +8352,7 @@ define('/core/ui',function(require){
     v.h = gl.eval(n, n._h, uni, el)
     return v
   }
-  // |  view computation
+  // view computation
   ui.inner = function(n, v){ // node, left top bottom right
     v = v || {}
     v.x = gl.eval(n, n.x_, uni, el),
@@ -8363,13 +8361,13 @@ define('/core/ui',function(require){
     v.h = gl.eval(n, n.h_, uni, el)
     return v
   }
-  // |  mouse is in the rect
+  // mouse is in the rect
   ui.isin = function(n){
     var r = ui.map(n)
     return !(r.x < 0 || r.x > 1 || r.y < 0 || r.y > 1)
   }
 
-  // |  get mouse remapped to a node
+  // get mouse remapped to a node
   ui.map = function(n, l, t, r, b){ // node, left top right bottom
     var v = ui.view(n)
 
@@ -8384,7 +8382,7 @@ define('/core/ui',function(require){
     }
    }
 
-  // |  get the mouse relative to a node
+  // get the mouse relative to a node
   ui.rel = function(n){ // node, left top right bottom
     var v = ui.view(n)
     return {
@@ -8393,7 +8391,7 @@ define('/core/ui',function(require){
     }
    }
 
-  // |  clip stuff
+  // clip stuff
    ui.clip = function(x, y, w, h, x1, y1, x2, y2){
      if(arguments.length>4){
       if(x > x1) x1 = x
@@ -8406,20 +8404,20 @@ define('/core/ui',function(require){
      }
    }
 
-  // |  mouse handling
+  // mouse handling
   var md // mousedown
   var ms // mousescroll
   var lp // last pick
   var le // last edge
   var dc // dbclick
 
-  // |  rendering
+  // rendering
   var dt = fn.dt()
   var uni = {s:{},m:{},l:{}}
   ui.uniforms = uni
   update_uni()
 
-  // |  update uniforms
+  // update uniforms
   function update_uni(){
     uni.t = uni.u = dt() / 1000
     uni.l.x = 0
@@ -8432,7 +8430,7 @@ define('/core/ui',function(require){
 
   var dirty = {}
 
-  // |  draw the layer tree
+  // draw the layer tree
   function drawLayer(n, x1, y1, x2, y2){
 
     var v = n.g_ || (n.g_ = {})
@@ -8480,7 +8478,7 @@ define('/core/ui',function(require){
     }
   }
 
-  // |  draw group IDs
+  // draw group IDs
   function drawGroupID(n){
     var vx1 = gl.eval(n, n._x, uni, el)
     var vy1 = gl.eval(n, n._y, uni, el)
@@ -8517,7 +8515,7 @@ define('/core/ui',function(require){
   var renderTime = fn.dt()
   var pv = new Uint8Array(4)
   ui.move = true
-  // |  render UI
+  // render UI
   ui.draw = function(){
     renderTime.reset()
     //dc = 0
@@ -8655,7 +8653,7 @@ define('/core/ui',function(require){
     //document.title = renderTime()
   }
 
-  // |  do automatic rendering
+  // do automatic rendering
   ui.drawer = function(){
     ui.redraw()
     gl.mouse_p(function(){ md = 1, ui.md = 1,gl.anim(ui.draw) })
@@ -8670,7 +8668,7 @@ define('/core/ui',function(require){
     })
   }
 
-  // |  force a redraw
+  // force a redraw
   ui.redraw = function(n){
     while(n && !n.g_) n = n._p
     if(!n){
@@ -8689,7 +8687,7 @@ define('/core/ui',function(require){
     }
     gl.anim(ui.draw)
   }
-  // |  force a redraw
+  // force a redraw
   ui.redrawRect = function(x, y, w, h){
     if(x < dirty.x1) dirty.x1 = x
     if(y < dirty.y1) dirty.y1 = y
@@ -8700,7 +8698,7 @@ define('/core/ui',function(require){
     gl.anim(ui.draw)
   }
 
-  // |  dump
+  // dump
   ui.dump = function(n, dv){
     var s = ''
     fn.walk(n, null, function(n, z){
@@ -8736,7 +8734,7 @@ define('/core/controls_mix',function(require, exports){
 
   var cm = exports
 
-  // |  button
+  // button
   cm.button = function(b){
     var d = 0
     function cl(){ // clicked
@@ -8776,7 +8774,7 @@ define('/core/controls_mix',function(require, exports){
     }
   }
 
-  // |  vertical scrollbar
+  // vertical scrollbar
   cm.scroll = function(b, k, v){ // button knob vertical
      var r // real move
     function ds(y){
@@ -8848,7 +8846,7 @@ define('/core/controls_mix',function(require, exports){
     b.mv = 0
   }
 
-  // |  hor/vert slider
+  // hor/vert slider
   cm.slider = function(b, k, v){ // button knob vertical
     var r // real move
     function ds(y){
@@ -8928,7 +8926,7 @@ define('/core/controls_mix',function(require, exports){
     b.alias('mv', k)
   }
 
-  // |  list
+  // list
   cm.list = function(b){
     var ty = 0 // total y
 
@@ -8971,7 +8969,7 @@ define('/core/controls_mix',function(require, exports){
     }
   }
 
-  // |  selecting childnodes
+  // selecting childnodes
   cm.select = function(b){
     var s // selection
 
@@ -9031,7 +9029,7 @@ define('/core/controls_mix',function(require, exports){
     }
   }
 
-  // |  drag
+  // drag
   cm.drag = function(b, c){
     var d
     var mx
@@ -9063,7 +9061,7 @@ define('/core/controls_mix',function(require, exports){
     }
   }
 
-  // |  resize
+  // resize
   cm.resize = function(b){
     var d
     var mx
@@ -9115,7 +9113,7 @@ define('/core/controls_mix',function(require, exports){
     }
   }
 
-  // |  split
+  // split
   cm.hSplit = function(b, d, v){ // background, divider,
     var c = 0
     var n1
@@ -9167,7 +9165,7 @@ define('/core/controls_mix',function(require, exports){
     }
   }
 
-  // |  split
+  // split
   cm.vSplit = function(b, d){ // background, divider,
     var c = 0
     var n1
@@ -9219,12 +9217,12 @@ define('/core/controls_mix',function(require, exports){
       ui.cap = 0
     }
   }
-  // |  fold
+  // fold
   cm.fold = function(g){
     var b
   }
 
-  // |  editing
+  // editing
   cm.edit = function(b, t, c, s, m){ // background, text, cursor, select, marked
 
     var cs = 0, ce = 0 // cursor / range
@@ -9411,7 +9409,7 @@ define('/core/controls_mix',function(require, exports){
     }
   }
 
-  // |  slides
+  // slides
   cm.slides = function(b){
     var cp = 0
     var tp = 0
@@ -9472,7 +9470,7 @@ define('/core/controls',function(require, exports){
   // shared style functions
   var bump = 'mix(black, n.hc, (0.5 + 0.5 * dot(vec3(1,0,0),normal(0.001, 0.001, n.hm))))'
 
-  // |  bumpmapped button
+  // bumpmapped button
   ct.button = function(g){
     // parts
     var b = ui.rect()
@@ -9516,7 +9514,7 @@ define('/core/controls',function(require, exports){
     return b
   }
 
-  // |  hiding vertical scrollbar
+  // hiding vertical scrollbar
   ct.vScrollHider = function(g){
     "no tracegl"
     // parts
@@ -9585,7 +9583,7 @@ define('/core/controls',function(require, exports){
     return b
   }
 
-  // |  horizontal scrollbar
+  // horizontal scrollbar
   ct.hScrollHider = function(g){
     "no tracegl"
     // parts
@@ -9655,7 +9653,7 @@ define('/core/controls',function(require, exports){
 
     return b
   }
-  // |  vertical scrollbar
+  // vertical scrollbar
   ct.vScroll = function(g){
     // parts
     var b = ui.rect()
@@ -9699,7 +9697,7 @@ define('/core/controls',function(require, exports){
     return b
   }
 
-  // |  horizontal scrollbar
+  // horizontal scrollbar
   ct.hScroll = function(g){
     // parts
     var b = ui.rect()
@@ -9740,7 +9738,7 @@ define('/core/controls',function(require, exports){
     return b
   }
 
-  // |  hv scrollbar filler
+  // hv scrollbar filler
   ct.hvFill = function(g){
     var b = ui.rect()
 
@@ -9803,7 +9801,7 @@ define('/core/controls',function(require, exports){
     b.y_ = 'n._y + n.vScroll' // scroll padded
 
   }
-  // |  vertical slider
+  // vertical slider
   ct.vSlider = function(g){
     // parts
     var b = ui.rect()
@@ -9844,7 +9842,7 @@ define('/core/controls',function(require, exports){
     return b
   }
 
-  // |  horizontal slider
+  // horizontal slider
   ct.hSlider = function(g){
     // parts
     var b = ui.rect()
@@ -9885,7 +9883,7 @@ define('/core/controls',function(require, exports){
     return b
   }
 
-  // |  item
+  // item
   ct.item = function(t){
     var g = fn.named(arguments)
     // parts
@@ -9921,7 +9919,7 @@ define('/core/controls',function(require, exports){
     return b
   }
 
-  // |  label
+  // label
   ct.label = function(g){
     var t = ui.text()
     t.f = 'sfont(t.defbg, t.deftxt)' // text frag shader
@@ -9930,7 +9928,7 @@ define('/core/controls',function(require, exports){
     return t
   }
 
-  // |  label centered
+  // label centered
   ct.labelc = function(g){
     var t = ui.text()
     t.f = 'sfont(t.defbg, t.deftxt)' // text frag shader
@@ -9940,7 +9938,7 @@ define('/core/controls',function(require, exports){
     return t
   }
 
-  // |  list
+  // list
   ct.list = function(g){
     // parts
     var b = ui.rect()
@@ -9971,7 +9969,7 @@ define('/core/controls',function(require, exports){
     return b
   }
 
-  // |  edit
+  // edit
   ct.edit = function(g){
     // parts
     var b = ui.rect() // base
@@ -10058,12 +10056,12 @@ define('/core/controls',function(require, exports){
     return b
   }
 
-  // |  combobox
+  // combobox
   ct.comboBox = function(g){
     var e = ct.edit()
   }
 
-  // |  dropshadow
+  // dropshadow
   ct.dropShadow = function(g){
     // add dropshadow
     var e = ui.edge()
@@ -10085,7 +10083,7 @@ define('/core/controls',function(require, exports){
     return e
   }
 
-  // |  dropshadow
+  // dropshadow
   ct.innerShadow = function(g){
     // add dropshadow
     var e = ui.edge()
@@ -10103,7 +10101,7 @@ define('/core/controls',function(require, exports){
     return e
   }
 
-  // |  window
+  // window
   ct.window = function(g){
     // parts
     var b = ui.rect()
@@ -10161,7 +10159,7 @@ define('/core/controls',function(require, exports){
     return b
   }
 
-  // |  hsplit
+  // hsplit
 
   ct.hSplit = function(g){
     // parts
@@ -10191,7 +10189,7 @@ define('/core/controls',function(require, exports){
     return b
   }
 
-  // |  vsplit
+  // vsplit
 
   ct.vSplit = function(g){
     // parts
@@ -10219,7 +10217,7 @@ define('/core/controls',function(require, exports){
 
     return b
   }
-  // |  fold
+  // fold
   ct.fold = function(g){
     // +- icon tree icon
     return ui.rect(function(n){
@@ -10234,7 +10232,7 @@ define('/core/controls',function(require, exports){
     })
   }
 
-  // |  c9
+  // c9
   ct.ico_c9 = function(g){
     return ui.rect(function(n){
       n.y = 300
@@ -10251,7 +10249,7 @@ define('/core/controls',function(require, exports){
         +  ')'
     })
   }
-  // |  horizontal slides with kb nav
+  // horizontal slides with kb nav
   ct.slides = function(g){
     var b = ui.group()
 
@@ -10421,7 +10419,7 @@ define('/core/text_mix',function(require, exports){
   var ui = require("./ui")
   var fn = require("./fn")
 
-  // |  textview with zoom/scroll
+  // textview with zoom/scroll
   exports.viewport = function(b){
     // viewport state
     var s = b.vps = {
@@ -10445,7 +10443,7 @@ define('/core/text_mix',function(require, exports){
     s.sp = s.op
     s.ss = s.os
 
-    // |  zoom (factor)
+    // zoom (factor)
     b.zoom = function(z){
       var osy = s.sy
       if(z>1 && s.sy < s.oy/7){
@@ -10490,7 +10488,7 @@ define('/core/text_mix',function(require, exports){
       h.l = 1
       h.c = function(){ s.x = -h.mv; ui.redraw(b) }
     }
-    // |  scroll event hook
+    // scroll event hook
     b.s = function(){
       if(!ui.ms.m && !ui.ms.a){
         v.ds(ui.mv / s.sy)
@@ -10568,7 +10566,7 @@ define('/core/text_mix',function(require, exports){
     }
   }
 
-  // |  text cursor and selection
+  // text cursor and selection
   exports.cursors = function(b, opt){
     opt = opt || {}
 
@@ -11110,7 +11108,7 @@ define('/core/text_mix',function(require, exports){
     }
   }
 
-  // |  drawing text structures
+  // drawing text structures
   exports.drawing = function(b){
     // depends on vps, ssh,
     b.drawText = function(){
@@ -11356,7 +11354,7 @@ define('/core/text_mix',function(require, exports){
     }
   }
 
-  // |  text storage mgmt
+  // text storage mgmt
   exports.storage = function(b, blockSize){
 
     // initialize storage values
