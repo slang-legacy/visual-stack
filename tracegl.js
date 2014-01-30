@@ -51,7 +51,11 @@ define('/trace/trace_server',function(require){
 	var ioServer = require('../core/io_server')
 
 	function out() {
-		for (var v = Array.prototype.slice.call(arguments), i = 0, c = out.colors; i < v.length; i++) {
+		var colors = {
+			bl:"30",bo:"1",r:"0;31",g:"0;32",y:"0;33",b:"0;34",m:"0;35",c:"0;36",
+			w:"0;37",br:"1;31",bg:"1;32",by:"1;33",bb:"1;34",bm:"1;35",bc:"1;36",bw:"1;37"
+		};
+		for (var v = Array.prototype.slice.call(arguments), i = 0, c = colors; i < v.length; i++) {
 			v[i] = String(v[i]).replace(/~(\w*)~/g, function(m, a) {
 				return "\033[" + (c[a] || 0) + "m";
 			}) + "\033[0m";
@@ -59,10 +63,6 @@ define('/trace/trace_server',function(require){
 		}
 	}
 
-	out.colors = {
-		bl:"30",bo:"1",r:"0;31",g:"0;32",y:"0;33",b:"0;34",m:"0;35",c:"0;36",
-		w:"0;37",br:"1;31",bg:"1;32",by:"1;33",bb:"1;34",bm:"1;35",bc:"1;36",bw:"1;37"
-	}
 
 	function makeFilter(fspec){
 
